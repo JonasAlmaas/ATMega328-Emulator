@@ -98,9 +98,9 @@ public:
 	// Rd - Destination (and source) register in the Register File
 	// Rr - Source register in the Register File
 
-	// Rd and Rr are registers in the range R0–R31
-	// Rdh and Rrh are registers in the range R16–R31(high half)
-	// Rdq and Rrq are registers in the range R16–R23 (one quarter of the register file)
+	// Rd and Rr are registers in the range R0-R31
+	// Rdh and Rrh are registers in the range R16-R31(high half)
+	// Rdq and Rrq are registers in the range R16-R23 (one quarter of the register file)
 	// Rp is a register pair R25:R24, R27:R26 (X), R29:R28 (Y) or R31:R30 (Z)
 
 	// R - Result after instruction is executed

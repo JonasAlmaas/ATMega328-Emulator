@@ -18,8 +18,8 @@ namespace Instructions {
 		{
 			cpu->SREG.S = cpu->SREG.N ^ cpu->SREG.V;
 		}
-
-		// Set if two’s complement overflow resulted from the operation; cleared otherwise.
+		
+		// Set if two's complement overflow resulted from the operation; cleared otherwise.
 		static inline void ByteTwosComplementOverflow(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 		{
 			cpu->SREG.V =
