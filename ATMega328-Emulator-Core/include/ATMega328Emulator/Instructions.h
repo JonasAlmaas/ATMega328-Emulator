@@ -3,26 +3,26 @@
 #include "ATMega328Emulator/CPU.h"
 
 // Minimal AVR1 Core:
-//	ADC - DONE
-//	ADD - DONE
-//	AND - DONE
-//	ANDI - DONE
-//	CBR - DONE
-//	CLR - DONE
-//	COM - DONE
-//	DEC
-//	EOR
-//	INC
-//	NEG
-//	OR
-//	ORI
-//	SBC
-//	SBCI
-//	SBR
-//	SER
-//	SUB
-//	SUBI
-//	TST
+// ADC  - IMPL
+// ADD  - IMPL - TESTED
+// AND  - IMPL
+// ANDI - IMPL
+// CBR
+// CLR
+// COM
+// DEC
+// EOR
+// INC
+// NEG
+// OR
+// ORI
+// SBC
+// SBCI
+// SBR
+// SER
+// SUB
+// SUBI
+// TST
 
 namespace ATMega328Emulator {
 	
@@ -53,28 +53,28 @@ namespace ATMega328Emulator {
 		}
 	
 		// ADC - Add with Carry
-		void Handle_ADC(Word instruction, Memory& memory, CPU* cpu);
+		void Handle_ADC(Word instruction, CPU* cpu);
 
 		// ADD - Add without Carry
-		void Handle_ADD(Word instruction, Memory& memory, CPU* cpu);
-
+		void Handle_ADD(Word instruction, CPU* cpu);
+		
 		// ADIW - Add Immediate to Word
-		void Handle_ADIW(Word instruction, Memory& memory, CPU* cpu);
+		void Handle_ADIW(Word instruction, CPU* cpu);
 
 		// AND - Logical AND
-		void Handle_AND(Word instruction, Memory& memory, CPU* cpu);
+		void Handle_AND(Word instruction, CPU* cpu);
 
 		// ANDI - Logical AND with Immediate
-		void Handle_ANDI(Word instruction, Memory& memory, CPU* cpu);
-
+		void Handle_ANDI(Word instruction, CPU* cpu);
+		
 		// CBR - Clear Bits in Register
-		//void Handle_CBR(uint32_t& cycles, Memory& memory, CPU* cpu);
+		//void Handle_CBR(Word instruction, CPU* cpu);
 
 		// CLR - Clear Register
-		//void Handle_CLR(uint32_t& cycles, Memory& memory, CPU* cpu);
-
+		//void Handle_CLR(Word instruction, CPU* cpu);
+		
 		// COM - One's Complement
-		//void Handle_COM(uint32_t& cycles, Memory& memory, CPU* cpu);
+		//void Handle_COM(Word instruction, CPU* cpu);
 	
 	}
 }

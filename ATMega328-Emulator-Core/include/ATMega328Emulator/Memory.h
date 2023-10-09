@@ -31,7 +31,7 @@ namespace ATMega328Emulator {
 
 		// Write a Byte to memory
 		// Takes 1 cycle
-		inline void Write(Byte value, Word address, uint32_t& cycles)
+		inline void Write(Byte value, Word address, int& cycles)
 		{
 			Data[address] = value;
 			cycles--;
@@ -39,12 +39,12 @@ namespace ATMega328Emulator {
 
 		// Write a Word to memory.
 		// Takes 2 cycles.
-		inline void WriteWord(Word value, Word address, uint32_t& cycles)
+		inline void WriteWord(Word value, Word address, int& cycles)
 		{
 			Write(value & 0xFF, address, cycles);
 			Write((value >> 8) & 0xFF, address + 1, cycles);
 		}
-	
+
 	public:
 		Byte* Data = nullptr;
 	

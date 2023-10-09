@@ -5,6 +5,29 @@
 #include "ATMega328Emulator/Types.h"
 #include "ATMega328Emulator/Memory.h"
 
+// Rd - Destination (and source) register in the Register File
+// Rr - Source register in the Register File
+// R - Result after instruction is executed
+
+// Rd and Rr are registers in the range R0-R31
+// Rdh and Rrh are registers in the range R16-R31(high half)
+// Rdq and Rrq are registers in the range R16-R23 (one quarter of the register file)
+// Rp is a register pair R25:R24, R27:R26 (X), R29:R28 (Y) or R31:R30 (Z)
+
+// Rd - Destination (and source) register in the Register File
+// Rr - Source register in the Register File
+// R - Result after instruction is executed
+// K - Constant data
+// k - Constant address
+// b - Bit in the Register File or I/O Register (3-bit)
+// s - Bit in the Status Register (3-bit)
+
+// A - I/O location address
+// q - Displacement for direct addressing (6-bit)
+// UU - Unsigned * Unsigned operands
+// SS - Signed * Signed operands
+// SU - Signed * Unsigned operands
+
 namespace ATMega328Emulator {
 	
 	class CPU
@@ -13,32 +36,27 @@ namespace ATMega328Emulator {
 		void Reset(Memory& memory);
 
 		// Fetches a Word from memory.
-		// Takes 2 cycles.
+		// Takes 1 cycles.
 		// Increments the program counter by 1.
-		inline Word FetchWord(uint32_t& cycles, Memory& mem)
+		inline Word FetchWord(int& cycles, Memory& memory)
 		{
 			// 6502 is little endian
-			Byte lo = ReadByte(cycles, PC * 2, mem);
-			Byte hi = ReadByte(cycles, PC * 2 + 1, mem);
+			Word address = PC * 2;
+
+			Byte lo = memory[address];
+			Byte hi = memory[address + 1];
 		
 			++PC;
-
+			--cycles;
+			
 			#if PLATFORM_BIG_ENDIAN
 				return hi | (lo << 8);
 			#else
 				return lo | (hi << 8);
 			#endif
 		}
-
-		// Reads a byte from memory.
-		// Takes 1 cycle.
-		inline Byte ReadByte(uint32_t& cycles, Byte address, Memory& mem)
-		{
-			--cycles;
-			return mem[address];
-		}
-
-		void Execute(uint32_t cycles, Memory& memory);
+		
+		void Execute(int cycles, Memory& memory);
 
 	public:
 		// General purpose registers
@@ -55,7 +73,6 @@ namespace ATMega328Emulator {
 		Byte R20, R21;
 		Byte R22, R23;
 		Byte R24, R25;
-		Byte R26, R27;
 		
 		union {
 			struct { Byte R26, R27; };
@@ -73,8 +90,8 @@ namespace ATMega328Emulator {
 		};
 
 		// Stack Pointer
-		Word SPH;   // Stack for return address and pushed registers
 		Word SPL;   // Stack Pointer to STACK
+		Word SPH;   // Stack for return address and pushed registers
 
 		// Program Counter
 		Word PC;
@@ -96,31 +113,8 @@ namespace ATMega328Emulator {
 			Byte Z : 1;   // Zero Flag
 			Byte C : 1;   // Carry Flag
 		} SREG;
+		
+		Byte* SRAM[2048]; // Internal SRAM (Should be at an offset of 0x0100)
 
-		// Rd - Destination (and source) register in the Register File
-		// Rr - Source register in the Register File
-
-		// Rd and Rr are registers in the range R0-R31
-		// Rdh and Rrh are registers in the range R16-R31(high half)
-		// Rdq and Rrq are registers in the range R16-R23 (one quarter of the register file)
-		// Rp is a register pair R25:R24, R27:R26 (X), R29:R28 (Y) or R31:R30 (Z)
-
-		// R - Result after instruction is executed
-	
-		//Byte Rd;    // Destination (and source) register in the Register File
-		//Byte Rr;    // Source register in the Register File
-		//Byte R;     // Result after instruction is executed
-		//Byte K;     // Constant data
-		//Byte k;     // Constant address
-		//Byte b;     // Bit in the Register File or I/O Register (3-bit)
-		//Byte s;     // Bit in the Status Register (3-bit)
-	
-		//Byte A;     // I/O location address
-		//Byte q;     // Displacement for direct addressing (6-bit)
-		//Byte UU;    // Unsigned x Unsigned operands
-		//Byte SS;    // Signed x Signed operands
-		//Byte SU;    // Signed x Unsigned operands
-	
 	};
-	
 }
