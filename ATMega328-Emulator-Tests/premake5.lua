@@ -10,11 +10,18 @@ project "ATMega328-Emulator-Tests"
 	files {
         "include/**.h",
         "src/**.cpp",
+
+		"vendor/gtest/googletest/**.h",
+        "vendor/gtest/googletest/**.hpp",
+        "vendor/gtest/googletest/src/gtest-all.cc"
     }
 
 	includedirs {
         "include",
 		"%{IncludeDir.ATMega328EmulatorCore}",
+
+		"vendor/gtest/googletest/include",
+		"vendor/gtest/googletest/",
     }
 
 	links {

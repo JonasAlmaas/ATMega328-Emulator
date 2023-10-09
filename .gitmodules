@@ -1,0 +1,3 @@
+[submodule "ATMega328-Emulator-Tests/vendor/gtest"]
+	path = ATMega328-Emulator-Tests/vendor/gtest
+	url = https://github.com/google/googletest
