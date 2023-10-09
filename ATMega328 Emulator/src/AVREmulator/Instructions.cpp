@@ -7,10 +7,11 @@ namespace Instructions {
 		// Set if there was a carry from bit 3; cleared otherwise.
 		static inline void CarryBit3(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 		{
-			cpu->SREG.H =
+			cpu->SREG.H = (
 				((Rd & 0x8) & (Rr & 0x8)) |
 				((Rr & 0x8) & (~R & 0x8)) |
-				((~R & 0x8) & (Rd & 0x8));
+				((~R & 0x8) & (Rd & 0x8))
+			) >> 3;
 		}
 			
 		// N XOR V, for signed tests.
@@ -22,20 +23,21 @@ namespace Instructions {
 		// Set if two's complement overflow resulted from the operation; cleared otherwise.
 		static inline void ByteTwosComplementOverflow(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 		{
-			cpu->SREG.V =
+			cpu->SREG.V =(
 				((Rd & 0x80) & (Rr & 0x80) & (~R & 0x80)) |
-				((~Rd & 0x80) & (~Rr & 0x80) & (R & 0x80));
+				((~Rd & 0x80) & (~Rr & 0x80) & (R & 0x80))
+			) >> 7;
 		}
 
 		static inline void WordTwosComplementOverflow(CPU* cpu, Word R, Word Rdh)
 		{
-			cpu->SREG.V = (~Rdh & 0x80) & ((R & 0x8000) >> 7);
+			cpu->SREG.V = ((~Rdh & 0x80) >> 7) & ((R & 0x8000) >> 15);
 		}
 		
 		// Set if Most Significant Bit(MSB) of the result is set; cleared otherwise.
 		static inline void MSBSet(CPU* cpu, Byte result)
 		{
-			cpu->SREG.N = result & 0x80;
+			cpu->SREG.N = (result & 0x80) >> 7;
 		}
 
 		// Set if Zero; cleared otherwise.
@@ -53,16 +55,17 @@ namespace Instructions {
 		// Set if there was a carry from the Most Significant Bit(MSB) of the result; cleared otherwise.
 		static inline void ByteCarryMSB(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 		{
-			cpu->SREG.C =
+			cpu->SREG.C = (
 				((Rd & 0x80) & (Rr & 0x80)) |
 				((Rr & 0x80) & (~R & 0x80)) |
-				((~R & 0x80) & (Rd & 0x80));
+				((~R & 0x80) & (Rd & 0x80))
+			) >> 7;
 		}
 
 		// Set if there was a carry from the Most Significant Bit(MSB) of the result; cleared otherwise.
 		static inline void WordCarryMSB(CPU* cpu, Word R, Word Rdh)
 		{
-			cpu->SREG.C = ((~R & 0x8000) >> 7) & (Rdh & 0x80);
+			cpu->SREG.C = ((~R & 0x8000) >> 15) & ((Rdh & 0x80) >> 7);
 		}
 		
 	}
