@@ -1,5 +1,5 @@
-project "ATMega328 Emulator"
-	kind "ConsoleApp"
+project "ATMega328-Emulator-Core"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "off"

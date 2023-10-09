@@ -1,8 +1,9 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
+include "Dependencies.lua"
 
-workspace "ATMega328 Emulator"
+workspace "ATMega328-Emulator"
     architecture "x86_64"
-    startproject "ATMega328 Emulator"
+    startproject "ATMega328-Emulator-Tests"
 
     configurations
 	{
@@ -23,4 +24,5 @@ workspace "ATMega328 Emulator"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-include "ATMega328 Emulator"
+include "ATMega328-Emulator-Core"
+include "ATMega328-Emulator-Tests"
