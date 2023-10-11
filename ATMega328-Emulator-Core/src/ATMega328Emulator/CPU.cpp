@@ -10,7 +10,7 @@ namespace ATMega328Emulator {
 	{
 		// I have no idea if this is correct
 		PC = 0x0;
-		SPL = 0x100; // First address of SRAM
+		SPL = 0x100; // First address of SRAM (Not true atm)
 		SPH = 0x0;
 		
 		SREG.I = SREG.T = SREG.H = SREG.S = SREG.V = SREG.N = SREG.Z = SREG.C = 0;
@@ -25,24 +25,34 @@ namespace ATMega328Emulator {
 		while (cycles > 0) {
 			Word instruction = FetchWord(cycles, memory);
 
-			if ((instruction & OpcodeMask::ADC) == ADC) {
-				Handle_ADC(instruction, this);
+			switch (instruction & 0b1111'1100'0000'0000)
+			{
+				case: ADC: return Handle_ADC(instruction, this);
+				case: ADD: return Handle_ADD(instruction, this);
+				case: AND: return Handle_AND(instruction, this);
+				case: CLR: return;
+				default: break;
 			}
-			else if ((instruction & OpcodeMask::ADD) == ADD) {
-				Handle_ADD(instruction, this);
+
+			switch (instruction & 0b1111'1111'0000'0000)
+			{
+				case: ADIW: return Handle_ADIW(instruction, this);
+				default: break;
 			}
-			else if ((instruction & OpcodeMask::ADIW) == ADIW) {
-				Handle_ADIW(instruction, this);
+
+			switch (instruction & 0b1111'0000'0000'0000)
+			{
+				case: ANDI: return Handle_ANDI(instruction, this);
+				default: break;
 			}
-			else if ((instruction & OpcodeMask::AND) == AND) {
-				Handle_AND(instruction, this);
+
+			switch (instruction & 0b1111'1110'0000'1111)
+			{
+				case: COM: return Handle_COM(instruction, this);
+				default: break;
 			}
-			else if ((instruction & OpcodeMask::ANDI) == ANDI) {
-				Handle_ANDI(instruction, this);
-			}
-			else {
-				std::cout << "Instruction not handled " << std::hex << instruction << std::endl;
-			}
+
+			std::cout << "Instruction not handled " << std::hex << instruction << std::endl;
 		}
 	}
 
