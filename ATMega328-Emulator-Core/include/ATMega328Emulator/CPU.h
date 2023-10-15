@@ -96,6 +96,9 @@ namespace ATMega328Emulator {
 			Word Z; // Indirect Address Register
 		};
 
+		// General Purpose I/O Registers
+		// https://www.arnabkumardas.com/arduino-tutorial/gpio-register-description
+
 		// Program Counter
 		Word PC;
 
@@ -103,22 +106,19 @@ namespace ATMega328Emulator {
 		Byte SPL; // Stack Pointer to STACK
 		Byte SPH; // Stack for return address and pushed registers
 
-		// I/O Registers
-		// Digital Output pin-state.
-		Byte PORTB;
-		Byte PORTC;
-		Byte PORTD;
+		// Ports as General Digital I/O
+		Byte DDRB; // Data Direction Register (Read Write)
+		Byte PORTB; // Data Register (Read Write)
+		Byte PINB; // Port Input Pins (Read Only)
 
-		// Pin-mode for digital IO (input or output).
-		Byte DDRB;
 		Byte DDRC;
-		Byte DDRD;
-
-		// Digital Input pin-state.
-		Byte PINB;
-		Byte PINC;
+		Byte PORTC;
 		Byte PIND;
-	
+
+		Byte DDRD;
+		Byte PORTD;
+		Byte PINC;
+
 		struct StatusRegister {
 			Byte I : 1; // Global Interrupt Enable/Disable Flag
 			Byte T : 1; // Transfer bit used by BLD and BST instructions

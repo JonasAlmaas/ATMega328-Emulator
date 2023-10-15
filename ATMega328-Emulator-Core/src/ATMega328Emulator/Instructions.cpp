@@ -393,8 +393,7 @@ namespace ATMega328Emulator {
 			Byte A = (instruction & 0b1111'1000) >> 3;
 			Byte b = instruction & 0b111;
 
-			// I have no clue if this is correct
-			Byte* reg = &cpu->PORTB + A;
+			Byte* reg = (Byte*)&cpu->PC + A;
 			*reg |= (1 << b);
 		}
 
