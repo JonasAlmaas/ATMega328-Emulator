@@ -212,6 +212,21 @@ namespace ATMega328Emulator {
 
 			*Rd = R;
 		}
+
+		void Handle_INC(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd + 1;
+
+			StatusFlag::SignedTest(cpu);
+			cpu->SREG.V = R == 0x80;
+			StatusFlag::MSBSet(cpu, R);
+			StatusFlag::ByteNullRes(cpu, R);
+
+			*Rd = R;
+		}
 		
 	}
 }

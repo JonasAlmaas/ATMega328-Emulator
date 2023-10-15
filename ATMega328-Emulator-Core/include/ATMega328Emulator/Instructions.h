@@ -12,7 +12,7 @@
 // COM  - IMPL - TESTED
 // DEC  - IMPL - TESTED
 // EOR  - IMPL - TESTED
-// INC
+// INC  - IMPL - TESTED
 // NEG
 // OR
 // ORI
@@ -35,8 +35,9 @@ namespace ATMega328Emulator {
 			AND = 0b0010'0000'0000'0000, // AND - Logical AND - 0010'00rd'dddd'rrrr
 			ANDI = 0b0111'0000'0000'0000, // ANDI - Logical AND with Immediate - 0111'KKKK'dddd'KKKK
 			COM = 0b1001'0100'0000'0000, // COM - One's Complement - 1001'010d'dddd'0000
-			DEC = 0b1001'0100'0000'1010, // DEC – Decrement - 1001'010d'dddd'1010
-			EOR = 0b0010'0100'0000'0000; // EOR - Logical Exclusive OR - 0010'01rd'dddd'rrrr
+			DEC = 0b1001'0100'0000'1010, // DEC - Decrement - 1001'010d'dddd'1010
+			EOR = 0b0010'0100'0000'0000, // EOR - Logical Exclusive OR - 0010'01rd'dddd'rrrr
+			INC = 0b1001'0100'0000'0011; // INC - Increment - 1001'010d'dddd'0011
 
 		// ADC - Add with Carry
 		void Handle_ADC(Word instruction, CPU* cpu);
@@ -61,6 +62,9 @@ namespace ATMega328Emulator {
 
 		// EOR - Logical Exclusive OR
 		void Handle_EOR(Word instruction, CPU* cpu);
+
+		// INC - Increment
+		void Handle_INC(Word instruction, CPU* cpu);
 	
 	}
 }

@@ -50,6 +50,7 @@ namespace ATMega328Emulator {
 			{
 				case COM: return Handle_COM(instruction, this);
 				case DEC: return Handle_DEC(instruction, this);
+				case INC: return Handle_INC(instruction, this);
 				default: break;
 			}
 
