@@ -64,9 +64,8 @@ namespace ATMega328Emulator {
 				static inline void ByteSubTwosComplementOverflow(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 				{
 					cpu->SREG.V = (
-						((~Rd & 0x80) & (Rr & 0x80)) |
-						((Rr & 0x80) & (R & 0x80)) |
-						((R & 0x80) & (~Rd & 0x80))
+						((Rd & 0x80) & (~Rr & 0x80) & (~R & 0x80)) |
+						((~Rd & 0x80) & (Rr & 0x80) & (R & 0x80))
 					) >> 7;
 				}
 				
@@ -75,9 +74,9 @@ namespace ATMega328Emulator {
 			namespace N {
 				
 				// Set if Most Significant Bit(MSB) of the result is set; cleared otherwise.
-				static inline void MSBSet(CPU* cpu, Byte result)
+				static inline void MSBSet(CPU* cpu, Byte R)
 				{
-					cpu->SREG.N = (result & 0x80) >> 7;
+					cpu->SREG.N = (R & 0x80) >> 7;
 				}
 				
 			}
@@ -85,21 +84,21 @@ namespace ATMega328Emulator {
 			namespace Z {
 				
 				// Set if Zero; cleared otherwise.
-				static inline void ByteNullRes(CPU* cpu, Byte result)
+				static inline void ByteNullRes(CPU* cpu, Byte R)
 				{
-					cpu->SREG.Z = result == 0;
+					cpu->SREG.Z = R == 0;
 				}
 
 				// Set if Zero; cleared otherwise.
-				static inline void WordNullRes(CPU* cpu, Word result)
+				static inline void WordNullRes(CPU* cpu, Word R)
 				{
-					cpu->SREG.Z = result == 0;
+					cpu->SREG.Z = R == 0;
 				}
 
 				// Previous value remains unchanged when the result is zero; cleared otherwise.
-				static inline void ByteNullResCarry(CPU* cpu, Byte result)
+				static inline void ByteNullResCarry(CPU* cpu, Byte R)
 				{
-					cpu->SREG.Z = result == 0 & cpu->SREG.Z;
+					cpu->SREG.Z = (R == 0) & cpu->SREG.Z;
 				}
 				
 			}
@@ -132,7 +131,8 @@ namespace ATMega328Emulator {
 					cpu->SREG.C = ((~R & 0x8000) >> 15) & ((Rd & 0x80) >> 7);
 				}
 
-				static inline void ByteGreaterPrev(CPU* cpu, Byte R, Byte Rd, Byte Rr)
+				// Set if the absolute value of the contents of Rr plus previous carry is larger than the absolute value of the Rd; cleared otherwise.
+				static inline void ByteGreater(CPU* cpu, Byte R, Byte Rd, Byte Rr)
 				{
 					cpu->SREG.C = (
 						((~Rd & 0x80) & (Rr & 0x80)) |
@@ -365,7 +365,45 @@ namespace ATMega328Emulator {
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
 			StatusFlag::Z::ByteNullResCarry(cpu, R);
-			StatusFlag::C::ByteGreaterPrev(cpu, R, *Rd, *Rr);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
+
+			*Rd = R;
+		}
+
+		void Handle_SUBI(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte K = (instruction & 0b1111) | (instruction & 0b1111'0000'0000) >> 4;
+
+			Byte* Rd = &cpu->R16 + d;
+			Byte R = *Rd - K;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, K);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
+
+			*Rd = R;
+		}
+
+		void Handle_SUB(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			Byte R = *Rd - *Rr;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, *Rr);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
 
 			*Rd = R;
 		}

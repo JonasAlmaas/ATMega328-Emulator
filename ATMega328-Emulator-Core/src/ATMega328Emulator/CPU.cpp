@@ -41,6 +41,7 @@ namespace ATMega328Emulator {
 			case EOR: Handle_EOR(instruction, this); return true;
 			case OR: Handle_OR(instruction, this); return true;
 			case SBC: Handle_SBC(instruction, this); return true;
+			case SUB: Handle_SUB(instruction, this); return true;
 			default: break;
 		}
 		
@@ -54,6 +55,7 @@ namespace ATMega328Emulator {
 		{
 			case ANDI: Handle_ANDI(instruction, this); return true;
 			case ORI: Handle_ORI(instruction, this); return true;
+			case SUBI: Handle_SUBI(instruction, this); return true;
 			default: break;
 		}
 		
