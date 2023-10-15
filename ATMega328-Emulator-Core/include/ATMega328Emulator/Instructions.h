@@ -14,8 +14,8 @@
 // EOR  - IMPL - TESTED
 // INC  - IMPL - TESTED
 // NEG  - IMPL - TESTED
-// OR
-// ORI
+// OR   - IMPL - TESTED
+// ORI  - IMPL - TESTED
 // SBC
 // SBCI
 // SBR
@@ -44,7 +44,8 @@ namespace ATMega328Emulator {
 			EOR  = 0b0010'0100'0000'0000, // EOR  - Logical Exclusive OR       - 0010'01rd'dddd'rrrr
 			INC  = 0b1001'0100'0000'0011, // INC  - Increment                  - 1001'010d'dddd'0011
 			NEG  = 0b1001'0100'0000'0001, // NEG  - Two's Complement           - 1001'010d'dddd'0001
-			OR   = 0b0010'1000'0000'0000; // OR   - Logical OR                 - 0010'10rd'dddd'rrrr
+			OR   = 0b0010'1000'0000'0000, // OR   - Logical OR                 - 0010'10rd'dddd'rrrr
+			ORI  = 0b0110'0000'0000'0000; // ORI  - Logical OR with Immediate  - 0110'KKKK'dddd'KKKK
 
 		// ADC - Add with Carry
 		void Handle_ADC(Word instruction, CPU* cpu);
@@ -79,5 +80,8 @@ namespace ATMega328Emulator {
 		// OR - Logical OR
 		void Handle_OR(Word instruction, CPU* cpu);
 
+		// ORI - Logical OR with Immediate
+		void Handle_ORI(Word instruction, CPU* cpu);
+		
 	}
 }

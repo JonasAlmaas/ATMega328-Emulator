@@ -52,6 +52,7 @@ namespace ATMega328Emulator {
 		switch (instruction & 0b1111'0000'0000'0000)
 		{
 			case ANDI: Handle_ANDI(instruction, this); return true;
+			case ORI: Handle_ORI(instruction, this); return true;
 			default: break;
 		}
 		
