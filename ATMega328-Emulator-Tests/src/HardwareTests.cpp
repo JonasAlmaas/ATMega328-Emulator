@@ -9,10 +9,16 @@ TEST(HardwareTests, CPUMemoryLayout)
 	EXPECT_EQ(offsetof(CPU, CPU::R00), 0x0);
 	EXPECT_EQ(offsetof(CPU, CPU::R31), 0x1F);
 
-	// TODO: Figure out memory layout
-	//EXPECT_EQ(offsetof(CPU, CPU::SPL), 0x5D);
-	//EXPECT_EQ(offsetof(CPU, CPU::SPL), 0x5E);
-	//EXPECT_EQ(offsetof(CPU, CPU::SREG), 0x5F);
-	
-	//EXPECT_EQ(offsetof(CPU, CPU::SRAM), 0x100);
+	EXPECT_EQ(offsetof(CPU, CPU::IO), 0x20);
+
+	// https://www.arnabkumardas.com/arduino-tutorial/gpio-register-description
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PINB), 0x03);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::DDRB), 0x04);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PORTB), 0x05);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PINC), 0x06);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::DDRC), 0x07);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PORTC), 0x08);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PIND), 0x09);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::DDRD), 0x0A);
+	EXPECT_EQ(offsetof(CPU::IORegisters, CPU::IORegisters::PORTD), 0x0B);
 }

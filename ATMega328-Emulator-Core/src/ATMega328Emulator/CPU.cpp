@@ -10,12 +10,11 @@ namespace ATMega328Emulator {
 	{
 		// I have no idea if this is correct
 		PC = 0x0;
-		SPL = (Byte)0x100; // First address of SRAM (Not true atm)
-		SPH = 0x0;
+		SP = 0x100; // First address of SRAM (Not true atm)
 
-		PORTB = PORTC = PORTD = 0;
-		DDRB = DDRC = DDRD = 0;
-		PINB = PINC = PIND = 0;
+		IO.PORTB = IO.PORTC = IO.PORTD = 0;
+		IO.DDRB = IO.DDRC = IO.DDRD = 0;
+		IO.PINB = IO.PINC = IO.PIND = 0;
 
 		SREG.I = SREG.T = SREG.H = SREG.S = SREG.V = SREG.N = SREG.Z = SREG.C = 0;
 		
@@ -27,7 +26,9 @@ namespace ATMega328Emulator {
 		while (cycles > 0) {
 			Word instruction = FetchWord(cycles, memory);
 
-			if (!handleInstruction(instruction, cycles, memory)) {
+			bool success = handleInstruction(instruction, cycles, memory);
+
+			if (!success) {
 				std::cout << "Instruction not handled " << std::hex << instruction << std::endl;
 			}
 		}
