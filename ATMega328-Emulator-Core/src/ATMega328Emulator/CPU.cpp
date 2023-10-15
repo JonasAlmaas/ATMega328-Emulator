@@ -39,6 +39,7 @@ namespace ATMega328Emulator {
 			case ADD: Handle_ADD(instruction, this); return true;
 			case AND: Handle_AND(instruction, this); return true;
 			case EOR: Handle_EOR(instruction, this); return true;
+			case OR: Handle_OR(instruction, this); return true;
 			default: break;
 		}
 		
