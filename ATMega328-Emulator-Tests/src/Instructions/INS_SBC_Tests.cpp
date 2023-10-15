@@ -10,7 +10,7 @@ TEST_F(ATMega328, Test_INS_SBC)
 	cpu.R02 = 0x2;
 	cpu.SREG.C = 1;
 
-	// sbc r1,r2 ; Subtract r1 from r2 with carry high byte
+	// sbc r1,r2 ; Subtract r2 from r1 with carry high byte
 	constexpr Word instruction =
 		Instruction::SBC
 		| 0b1'0000 // Rd = R1

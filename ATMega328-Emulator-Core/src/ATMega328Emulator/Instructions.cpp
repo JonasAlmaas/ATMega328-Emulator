@@ -370,6 +370,34 @@ namespace ATMega328Emulator {
 			*Rd = R;
 		}
 
+		void Handle_SBCI(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte K = (instruction & 0b1111) | (instruction & 0b1111'0000'0000) >> 4;
+
+			Byte* Rd = &cpu->R16 + d;
+			Byte R = *Rd - K - cpu->SREG.C;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, K);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullResCarry(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
+
+			*Rd = R;
+		}
+
+		void Handle_SBI(Word instruction, CPU* cpu)
+		{
+			Byte A = (instruction & 0b1111'1000) >> 3;
+			Byte b = instruction & 0b111;
+
+			// I have no clue if this is correct
+			Byte* reg = &cpu->PORTB + A;
+			*reg |= (1 << b);
+		}
+
 		void Handle_SUBI(Word instruction, CPU* cpu)
 		{
 			Byte d = (instruction & 0b1111'0000) >> 4;

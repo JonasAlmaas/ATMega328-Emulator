@@ -10,9 +10,13 @@ namespace ATMega328Emulator {
 	{
 		// I have no idea if this is correct
 		PC = 0x0;
-		SPL = 0x100; // First address of SRAM (Not true atm)
+		SPL = (Byte)0x100; // First address of SRAM (Not true atm)
 		SPH = 0x0;
-		
+
+		PORTB = PORTC = PORTD = 0;
+		DDRB = DDRC = DDRD = 0;
+		PINB = PINC = PIND = 0;
+
 		SREG.I = SREG.T = SREG.H = SREG.S = SREG.V = SREG.N = SREG.Z = SREG.C = 0;
 		
 		memory.Initialize();
@@ -48,6 +52,7 @@ namespace ATMega328Emulator {
 		switch (instruction & 0b1111'1111'0000'0000)
 		{
 			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
+			case SBI: Handle_SBI(instruction, this); return true;
 			default: break;
 		}
 		
@@ -55,6 +60,7 @@ namespace ATMega328Emulator {
 		{
 			case ANDI: Handle_ANDI(instruction, this); return true;
 			case ORI: Handle_ORI(instruction, this); return true;
+			case SBCI: Handle_SBCI(instruction, this); return true;
 			case SUBI: Handle_SUBI(instruction, this); return true;
 			default: break;
 		}

@@ -33,6 +33,13 @@ namespace ATMega328Emulator {
 	class CPU
 	{
 	public:
+		static constexpr uint32_t FREQUENCY = 20'000'000; // 20MHz
+		static constexpr uint16_t PROGRAM_MEMORY_SIZE = 32 * 1024; // 32KB
+		static constexpr uint16_t FLASH_SIZE = 32 * 1024; // 32KB
+		static constexpr uint16_t SRAM_SIZE = 2 * 1024; // 2KB
+		static constexpr uint16_t EEPROM_SIZE = 1024; // 1KB
+		
+	public:
 		void Reset(Memory& memory);
 
 		// Fetches a Word from memory.
@@ -89,35 +96,47 @@ namespace ATMega328Emulator {
 			Word Z; // Indirect Address Register
 		};
 
-		// Stack Pointer
-		Word SPL;   // Stack Pointer to STACK
-		Word SPH;   // Stack for return address and pushed registers
-
 		// Program Counter
 		Word PC;
 
+		// Stack Pointer
+		Byte SPL; // Stack Pointer to STACK
+		Byte SPH; // Stack for return address and pushed registers
+
 		// I/O Registers
-		Byte RAMPD; // Extended direct
-		Byte RAMPX; // Extended X
-		Byte RAMPY; // Extended Y
-		Byte RAMPZ; // Extended Z
-		Byte EIND; // Extended indirect
+		// Digital Output pin-state.
+		Byte PORTB;
+		Byte PORTC;
+		Byte PORTD;
+
+		// Pin-mode for digital IO (input or output).
+		Byte DDRB;
+		Byte DDRC;
+		Byte DDRD;
+
+		// Digital Input pin-state.
+		Byte PINB;
+		Byte PINC;
+		Byte PIND;
 	
 		struct StatusRegister {
-			Byte I : 1;   // Global Interrupt Enable/Disable Flag
-			Byte T : 1;   // Transfer bit used by BLD and BST instructions
-			Byte H : 1;   // Half Carry Flag
-			Byte S : 1;   // N ^ V, For signed tests
-			Byte V : 1;   // Two's complement overflow indicator
-			Byte N : 1;   // Negative Flag
-			Byte Z : 1;   // Zero Flag
-			Byte C : 1;   // Carry Flag
+			Byte I : 1; // Global Interrupt Enable/Disable Flag
+			Byte T : 1; // Transfer bit used by BLD and BST instructions
+			Byte H : 1; // Half Carry Flag
+			Byte S : 1; // N ^ V, For signed tests
+			Byte V : 1; // Two's complement overflow indicator
+			Byte N : 1; // Negative Flag
+			Byte Z : 1; // Zero Flag
+			Byte C : 1; // Carry Flag
 		} SREG;
 		
-		Byte* SRAM[2048]; // Internal SRAM (Should be at an offset of 0x0100)
+		Byte SRAM[SRAM_SIZE]; // Internal SRAM (Should be at an offset of 0x0100)
+		
+		Byte EEPROM[EEPROM_SIZE];
 
 	private:
 		bool handleInstruction(Word instruction, int& cycles, Memory& memory);
 		
 	};
+	
 }
