@@ -3,8 +3,7 @@
 # ATMega328 Emulator
 
 ### AVR Tools
-- [Atmel Studio](https://www.microchip.com/en-us/tools-resources/archives/avr-sam-mcus)
-- [Standalone Assembler](https://sourceforge.net/projects/avra/)
+- [Standalone Assembler](https://www.avrfreaks.net/sfc/servlet.shepherd/document/download/0693l00000VHTl5AAH)
 
 ### Resources
 - [Wikipedia](https://en.wikipedia.org/wiki/ATmega328)
