@@ -10,7 +10,7 @@ TEST_F(ATMega328, Test_INS_INC)
 
 	// inc r4 ; Increment r4
 	constexpr Word instruction =
-		Instructions::INC
+		Instruction::INC
 		| 0b100'0000; // Rd = R4
 
 	int dummyCycles = 0;
@@ -42,7 +42,7 @@ TEST_F(ATMega328, Test_INS_INC_TwosComplementOverflow)
 
 	// inc r4 ; Increment r4
 	constexpr Word instruction =
-		Instructions::INC
+		Instruction::INC
 		| 0b100'0000; // Rd = R4
 
 	int dummyCycles = 0;

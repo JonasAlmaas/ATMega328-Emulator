@@ -2,7 +2,7 @@
 
 namespace ATMega328Emulator {
 	
-	namespace Instructions {
+	namespace Instruction {
 	
 		namespace StatusFlag {
 	
@@ -14,6 +14,12 @@ namespace ATMega328Emulator {
 					((Rr & 0x8) & (~R & 0x8)) |
 					((~R & 0x8) & (Rd & 0x8))
 				) >> 3;
+			}
+
+			// Set if there was a borrow from bit 3; cleared otherwise.
+			static inline void BorrowBit3(CPU* cpu, Byte R, Byte Rd)
+			{
+				cpu->SREG.H = ((R & 0b1000) | (Rd & 0b1000)) >> 3;
 			}
 			
 			// N XOR V, for signed tests.
@@ -224,6 +230,23 @@ namespace ATMega328Emulator {
 			cpu->SREG.V = R == 0x80;
 			StatusFlag::MSBSet(cpu, R);
 			StatusFlag::ByteNullRes(cpu, R);
+
+			*Rd = R;
+		}
+
+		void Handle_NEG(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = (~*Rd) + 1;
+
+			StatusFlag::BorrowBit3(cpu, R, *Rd);
+			StatusFlag::SignedTest(cpu);
+			cpu->SREG.V = R == 0x80;
+			StatusFlag::MSBSet(cpu, R);
+			StatusFlag::ByteNullRes(cpu, R);
+			cpu->SREG.C = R != 0x0;
 
 			*Rd = R;
 		}

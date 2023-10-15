@@ -10,7 +10,7 @@ TEST_F(ATMega328, Test_INS_DEC)
 
 	// dec r4 ; Decrement r4
 	constexpr Word instruction =
-		Instructions::DEC
+		Instruction::DEC
 		| 0b100'0000; // Rd = R4
 
 	int dummyCycles = 0;
@@ -42,7 +42,7 @@ TEST_F(ATMega328, Test_INS_DEC_TwosComplementOverflow)
 
 	// dec r4 ; Decrement r4
 	constexpr Word instruction =
-		Instructions::DEC
+		Instruction::DEC
 		| 0b100'0000; // Rd = R4
 
 	int dummyCycles = 0;

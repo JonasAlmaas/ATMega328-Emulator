@@ -11,7 +11,7 @@ TEST_F(ATMega328, Test_INS_ADIW)
 	
 	// adiw r25:24, 1; Add 6 to r25:r24
 	constexpr Word instruction =
-		Instructions::ADIW
+		Instruction::ADIW
 		| 0x0  // Rd = R24
 		| 0x6; // K = 1
 
@@ -47,7 +47,7 @@ TEST_F(ATMega328, Test_INS_ADIW_ZPointer)
 
 	// adiw ZH:ZL, 63; Add 63 to the Z-pointer(r31:r30)
 	constexpr Word instruction =
-		Instructions::ADIW
+		Instruction::ADIW
 		| 0b11'0000    // Rd = ZH:ZL
 		| 0b1100'1111; // K = 63
 

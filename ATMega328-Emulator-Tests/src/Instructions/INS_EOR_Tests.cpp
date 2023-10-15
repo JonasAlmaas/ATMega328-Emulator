@@ -14,7 +14,7 @@ TEST_F(ATMega328, Test_INS_EOR)
 
 	// eor r0,r22 ; Bitwise exclusive or between r0 and r22
 	constexpr Word instruction =
-		Instructions::EOR
+		Instruction::EOR
 		| 0b0             // Rd = R0
 		| 0b10'0000'0110; // Rr = R22
 
@@ -47,7 +47,7 @@ TEST_F(ATMega328, Test_INS_EOR_CLR)
 	
 	// eor r4,r4 ; Clear r4. Same as "clr r4"
 	constexpr Word instruction =
-		Instructions::EOR
+		Instruction::EOR
 		| 0b100'0000 // Rd = R4
 		| 0b100;     // Rr = R4
 

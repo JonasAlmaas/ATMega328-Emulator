@@ -11,7 +11,7 @@ TEST_F(ATMega328, Test_INS_ADD)
 
 	// add r1,r2 ; Add R2 to R1 (R1=R1+R2)
 	constexpr Word instruction =
-		Instructions::ADD
+		Instruction::ADD
 		| 0b1'0000  // Rd = R1
 		| 0b0'0010; // Rr = R2
 
@@ -42,7 +42,7 @@ TEST_F(ATMega328, Test_INS_ADD_AddRegToSelf)
 	cpu.R28 = 0x10;
 
 	// add R28,R28 ; Add R28 to itself (R28=R28+R28)
-	constexpr Word instruction = Instructions::ADD
+	constexpr Word instruction = Instruction::ADD
 		| 0b01'1100'0000  // Rd = R28
 		| 0b10'0000'1100; // Rr = R28
 
@@ -75,7 +75,7 @@ TEST_F(ATMega328, Test_INS_ADD_CarryFlag)
 
 	// add r1,r2 ; Add R2 to R1 (R1=R1+R2)
 	constexpr Word instruction =
-		Instructions::ADD
+		Instruction::ADD
 		| 0b1'0000  // Rd = R1
 		| 0b0'0010; // Rr = R2
 

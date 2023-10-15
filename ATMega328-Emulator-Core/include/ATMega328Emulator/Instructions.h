@@ -13,7 +13,7 @@
 // DEC  - IMPL - TESTED
 // EOR  - IMPL - TESTED
 // INC  - IMPL - TESTED
-// NEG
+// NEG  - IMPL - TESTED
 // OR
 // ORI
 // SBC
@@ -26,7 +26,7 @@
 
 namespace ATMega328Emulator {
 	
-	namespace Instructions {
+	namespace Instruction {
 	
 		static constexpr Word
 			ADC = 0b0001'1100'0000'0000, // ADC - Add with Carry - 0001'11rd'dddd'rrrr;
@@ -37,7 +37,8 @@ namespace ATMega328Emulator {
 			COM = 0b1001'0100'0000'0000, // COM - One's Complement - 1001'010d'dddd'0000
 			DEC = 0b1001'0100'0000'1010, // DEC - Decrement - 1001'010d'dddd'1010
 			EOR = 0b0010'0100'0000'0000, // EOR - Logical Exclusive OR - 0010'01rd'dddd'rrrr
-			INC = 0b1001'0100'0000'0011; // INC - Increment - 1001'010d'dddd'0011
+			INC = 0b1001'0100'0000'0011, // INC - Increment - 1001'010d'dddd'0011
+			NEG = 0b1001'0100'0000'0001; // NEG - Two's Complement - 1001'010d'dddd'0001
 
 		// ADC - Add with Carry
 		void Handle_ADC(Word instruction, CPU* cpu);
@@ -65,6 +66,8 @@ namespace ATMega328Emulator {
 
 		// INC - Increment
 		void Handle_INC(Word instruction, CPU* cpu);
-	
+
+		// NEG - Two's Complement
+		void Handle_NEG(Word instruction, CPU* cpu);
 	}
 }

@@ -116,5 +116,8 @@ namespace ATMega328Emulator {
 		
 		Byte* SRAM[2048]; // Internal SRAM (Should be at an offset of 0x0100)
 
+	private:
+		bool handleInstruction(Word instruction, int& cycles, Memory& memory);
+		
 	};
 }
