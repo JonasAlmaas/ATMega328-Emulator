@@ -17,7 +17,7 @@ namespace ATMega328Emulator {
 			}
 			
 			// N XOR V, for signed tests.
-			static inline void NVSignedTest(CPU* cpu)
+			static inline void SignedTest(CPU* cpu)
 			{
 				cpu->SREG.S = cpu->SREG.N ^ cpu->SREG.V;
 			}
@@ -83,7 +83,7 @@ namespace ATMega328Emulator {
 			Byte R = *Rd + *Rr + cpu->SREG.C;
 
 			StatusFlag::CarryBit3(cpu, R, *Rd, *Rr);
-			StatusFlag::NVSignedTest(cpu);
+			StatusFlag::SignedTest(cpu);
 			StatusFlag::ByteTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::MSBSet(cpu, R);
 			StatusFlag::ByteNullRes(cpu, R);
@@ -103,7 +103,7 @@ namespace ATMega328Emulator {
 			Byte R = *Rd + *Rr;
 		
 			StatusFlag::CarryBit3(cpu, R, *Rd, *Rr);
-			StatusFlag::NVSignedTest(cpu);
+			StatusFlag::SignedTest(cpu);
 			StatusFlag::ByteTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::MSBSet(cpu, R);
 			StatusFlag::ByteNullRes(cpu, R);
@@ -120,7 +120,7 @@ namespace ATMega328Emulator {
 			Word* Rdh = ((Word*)&cpu->R24) + d;
 			Word R = *Rdh + K;
 			
-			StatusFlag::NVSignedTest(cpu);
+			StatusFlag::SignedTest(cpu);
 			StatusFlag::WordTwosComplementOverflow(cpu, R, *Rdh);
 			StatusFlag::MSBSet(cpu, (R & 0xFF00) >> 8);
 			StatusFlag::WordNullRes(cpu, R);
@@ -140,7 +140,7 @@ namespace ATMega328Emulator {
 		
 			Byte R = *Rd & *Rr;
 	
-			StatusFlag::NVSignedTest(cpu);
+			StatusFlag::SignedTest(cpu);
 			cpu->SREG.V = 0;
 			StatusFlag::MSBSet(cpu, R);
 			StatusFlag::ByteNullRes(cpu, R);
@@ -156,42 +156,62 @@ namespace ATMega328Emulator {
 			Byte* Rd = &cpu->R16 + d;
 			Byte R = *Rd & K;
 		
-			StatusFlag::NVSignedTest(cpu);
+			StatusFlag::SignedTest(cpu);
 			cpu->SREG.V = 0;
 			StatusFlag::MSBSet(cpu, R);
 			StatusFlag::ByteNullRes(cpu, R);
 		
 			*Rd = R;
 		}
-
-		void Handle_CLR(Word instruction, CPU* cpu)
+		
+		void Handle_COM(Word instruction, CPU* cpu)
 		{
-			Byte d = instruction & 0b11'1111'1111;
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
 
 			Byte* Rd = &cpu->R00 + d;
-			Byte R = *Rd ^ *Rd;
-
-			cpu->SREG.S = 0;
+			Byte R = ~*Rd;
+			
+			StatusFlag::SignedTest(cpu);
 			cpu->SREG.V = 0;
-			cpu->SREG.N = 0;
-			cpu->SREG.Z = 1;
+			StatusFlag::MSBSet(cpu, R);
+			StatusFlag::ByteNullRes(cpu, R);
+			cpu->SREG.C = 1;
+			
+			*Rd = R;
+		}
+
+		void Handle_DEC(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd - 1;
+
+			StatusFlag::SignedTest(cpu);
+			cpu->SREG.V = R == 0x7F;
+			StatusFlag::MSBSet(cpu, R);
+			StatusFlag::ByteNullRes(cpu, R);
 
 			*Rd = R;
 		}
 
-		/*
-		void Handle_COM(Word instruction, CPU* cpu)
+		void Handle_EOR(Word instruction, CPU* cpu)
 		{
-			cpu->R = ~cpu->Rd;
-	
-			StatusFlag::NVSignedTest(cpu);
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			Byte R = *Rd ^ *Rr;
+
+			StatusFlag::SignedTest(cpu);
 			cpu->SREG.V = 0;
-			StatusFlag::IsResByteMSBSet(cpu);
-			StatusFlag::IsResByteNull(cpu);
-			cpu->SREG.C = 1;
-	
-			cpu->Rd = cpu->R;
+			StatusFlag::MSBSet(cpu, R);
+			StatusFlag::ByteNullRes(cpu, R);
+
+			*Rd = R;
 		}
-		*/
+		
 	}
 }

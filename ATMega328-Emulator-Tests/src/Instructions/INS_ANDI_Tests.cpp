@@ -18,7 +18,7 @@ TEST_F(ATMega328, Test_INS_ANDI)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(2, memory); // ADIW takes 2 cycles
+	cpu.Execute(2, memory); // ANDI takes 2 cycles
 
 	// Assert
 	EXPECT_EQ(cpu.R17, 0b0000'1010);
@@ -51,7 +51,7 @@ TEST_F(ATMega328, Test_INS_ANDI_NullResult)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(2, memory); // ADIW takes 2 cycles
+	cpu.Execute(2, memory); // ANDI takes 2 cycles
 
 	// Assert
 	EXPECT_EQ(cpu.R17, 0);
@@ -84,7 +84,7 @@ TEST_F(ATMega328, Test_INS_ANDI_MSBSet)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(2, memory); // ADIW takes 2 cycles
+	cpu.Execute(2, memory); // ANDI takes 2 cycles
 
 	// Assert
 	EXPECT_EQ(cpu.R17, 0b1010'1010);
