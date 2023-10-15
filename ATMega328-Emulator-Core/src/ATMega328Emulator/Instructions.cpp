@@ -74,8 +74,11 @@ namespace ATMega328Emulator {
 		
 		void Handle_ADC(Word instruction, CPU* cpu)
 		{
-			Byte* Rd = &cpu->R00 + ((instruction & 0b1'1111'0000) >> 4);
-			Byte* Rr = &cpu->R00 + ((instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5));
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+			
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
 		
 			Byte R = *Rd + *Rr + cpu->SREG.C;
 
@@ -91,8 +94,11 @@ namespace ATMega328Emulator {
 
 		void Handle_ADD(Word instruction, CPU* cpu)
 		{
-			Byte* Rd = &cpu->R00 + ((instruction & 0b1'1111'0000) >> 4);
-			Byte* Rr = &cpu->R00 + ((instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5));
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+			
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
 		
 			Byte R = *Rd + *Rr;
 		
@@ -106,12 +112,12 @@ namespace ATMega328Emulator {
 			*Rd = R;
 		}
 
-		void Handle_ADIW(Word instruction, CPU* cpu)
+		void Handle_ADIW(Word instruction, int& cycles, CPU* cpu)
 		{
 			Byte d = (instruction & 0b11'0000) >> 4; // 2 bits describing the offset from R24 in steps of 2.
 			Byte K = instruction & 0b1111 | ((instruction & 0b1100'0000) >> 2); // Value in the range of [0-63]
 
-			Word* Rdh = (Word*)&cpu->R24 + d; // TODO: Might have to multiply by 2.
+			Word* Rdh = ((Word*)&cpu->R24) + d;
 			Word R = *Rdh + K;
 			
 			StatusFlag::NVSignedTest(cpu);
@@ -121,19 +127,16 @@ namespace ATMega328Emulator {
 			StatusFlag::WordCarryMSB(cpu, R, *Rdh);
 		
 			*Rdh = R;
-
-			// Might have to do something like this
-			/*
-			Byte* target = &cpu->R24 + dd * 2;
-			*target = immediate & 0xFF;
-			*(target - 1) = (immediate & 0xFF00) >> 8;
-			*/
+			--cycles;
 		}
 	
 		void Handle_AND(Word instruction, CPU* cpu)
 		{
-			Byte* Rd = &cpu->R00 + ((instruction & 0b1'1111'0000) >> 4);
-			Byte* Rr = &cpu->R00 + ((instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5));
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
 		
 			Byte R = *Rd & *Rr;
 	
@@ -147,11 +150,11 @@ namespace ATMega328Emulator {
 	
 		void Handle_ANDI(Word instruction, CPU* cpu)
 		{
-			Byte dstOffset = (instruction & 0b1111'0000) >> 4;
-			Byte immediate = (instruction & 0xF) | ((instruction & 0xF00) >> 4);
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte K = (instruction & 0xF) | ((instruction & 0xF00) >> 4);
 		
-			Byte* Rd = &cpu->R16 + dstOffset;
-			Byte R = *Rd & immediate;
+			Byte* Rd = &cpu->R16 + d;
+			Byte R = *Rd & K;
 		
 			StatusFlag::NVSignedTest(cpu);
 			cpu->SREG.V = 0;
@@ -160,34 +163,21 @@ namespace ATMega328Emulator {
 		
 			*Rd = R;
 		}
-	
-		/*
-		void Handle_CBR(Word instruction, CPU* cpu)
-		{
-			cpu->R = cpu->Rd & ~cpu->K;
 
-			StatusFlag::NVSignedTest(cpu);
-			cpu->SREG.V = 0;
-			StatusFlag::IsResByteMSBSet(cpu);
-			StatusFlag::IsResByteNull(cpu);
-	
-			cpu->Rd = cpu->R;
-		}
-		*/
-
-		/*
 		void Handle_CLR(Word instruction, CPU* cpu)
 		{
-			cpu->R = cpu->Rd ^ cpu->Rd;
+			Byte d = instruction & 0b11'1111'1111;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd ^ *Rd;
 
 			cpu->SREG.S = 0;
 			cpu->SREG.V = 0;
 			cpu->SREG.N = 0;
 			cpu->SREG.Z = 1;
 
-			cpu->Rd = cpu->R;
+			*Rd = R;
 		}
-		*/
 
 		/*
 		void Handle_COM(Word instruction, CPU* cpu)

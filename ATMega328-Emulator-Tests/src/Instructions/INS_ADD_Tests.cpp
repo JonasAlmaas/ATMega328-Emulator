@@ -9,7 +9,7 @@ TEST_F(ATMega328, Test_INS_ADD)
 	cpu.R01 = 0x01;
 	cpu.R02 = 0x02;
 
-	// ADD r1,r2 ; Add R2 to R1 (R1=R1+R2)
+	// add r1,r2 ; Add R2 to R1 (R1=R1+R2)
 	constexpr Word instruction =
 		Instructions::ADD
 		| 0b1'0000  // Rd = R1
@@ -19,7 +19,7 @@ TEST_F(ATMega328, Test_INS_ADD)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(1, memory);
+	cpu.Execute(1, memory); // ADD takes 1 cycle
 
 	// Assert
 	EXPECT_EQ(cpu.R01, 0x03);
@@ -41,7 +41,7 @@ TEST_F(ATMega328, Test_INS_ADD_AddRegToSelf)
 
 	cpu.R28 = 0x10;
 
-	// ADD R28,R28 ; Add R28 to itself (R28=R28+R28)
+	// add R28,R28 ; Add R28 to itself (R28=R28+R28)
 	constexpr Word instruction = Instructions::ADD
 		| 0b01'1100'0000  // Rd = R28
 		| 0b10'0000'1100; // Rr = R28
@@ -50,7 +50,7 @@ TEST_F(ATMega328, Test_INS_ADD_AddRegToSelf)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(1, memory);
+	cpu.Execute(1, memory); // ADD takes 1 cycle
 
 	// Assert
 	EXPECT_EQ(cpu.R28, 0x20);
@@ -73,7 +73,7 @@ TEST_F(ATMega328, Test_INS_ADD_CarryFlag)
 	cpu.R01 = 0xFE;
 	cpu.R02 = 0x03;
 
-	// ADD r1,r2 ; Add R2 to R1 (R1=R1+R2)
+	// add r1,r2 ; Add R2 to R1 (R1=R1+R2)
 	constexpr Word instruction =
 		Instructions::ADD
 		| 0b1'0000  // Rd = R1
@@ -83,7 +83,7 @@ TEST_F(ATMega328, Test_INS_ADD_CarryFlag)
 	memory.WriteWord(instruction, 0x0, dummyCycles);
 
 	// Act
-	cpu.Execute(1, memory);
+	cpu.Execute(1, memory); // ADD takes 1 cycle
 
 	// Assert
 	EXPECT_EQ(cpu.R01, 0x1);

@@ -30,13 +30,13 @@ namespace ATMega328Emulator {
 				case ADC: return Handle_ADC(instruction, this);
 				case ADD: return Handle_ADD(instruction, this);
 				case AND: return Handle_AND(instruction, this);
-				case CLR: return;
+				case CLR: return Handle_CLR(instruction, this);
 				default: break;
 			}
 
 			switch (instruction & 0b1111'1111'0000'0000)
 			{
-				case ADIW: return Handle_ADIW(instruction, this);
+				case ADIW: return Handle_ADIW(instruction, cycles, this);
 				default: break;
 			}
 
