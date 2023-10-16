@@ -37,13 +37,19 @@ namespace ATMega328Emulator {
 	bool CPU::handleInstruction(Word instruction, int& cycles, Memory& memory)
 	{
 		using namespace Instruction;
-		
+
 		switch (instruction & 0b1111'1110'1000'1111)
 		{
 			case BCLR: Handle_BCLR(instruction, this); return true;
 			default: break;
 		}
-
+		
+		switch (instruction & 0b1111'1111'1000'1111)
+		{
+			case BSET: Handle_BSET(instruction, this); return true;
+			default: break;
+		}
+		
 		switch (instruction & 0b1111'1110'0000'1111)
 		{
 			case ASR: Handle_ASR(instruction, this); return true;
@@ -53,17 +59,19 @@ namespace ATMega328Emulator {
 			case NEG: Handle_NEG(instruction, this); return true;
 			default: break;
 		}
-
+		
 		switch (instruction & 0b1111'1111'0000'0000)
 		{
 			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
+			case CBI: Handle_CBI(instruction, this); return true;
 			case SBI: Handle_SBI(instruction, this); return true;
 			default: break;
 		}
-
+		
 		switch (instruction & 0b1111'1110'0000'1000)
 		{
 			case BLD: Handle_BLD(instruction, this); return true;
+			case BST: Handle_BST(instruction, this); return true;
 			default: break;
 		}
 
@@ -72,20 +80,31 @@ namespace ATMega328Emulator {
 			case ADC: Handle_ADC(instruction, this); return true;
 			case ADD: Handle_ADD(instruction, this); return true;
 			case AND: Handle_AND(instruction, this); return true;
+			case BRBC: Handle_BRBC(instruction, cycles, this); return true;
+			case BRBS: Handle_BRBS(instruction, cycles, this); return true;
+			case CP: Handle_CP(instruction, this); return true;
+			case CPC: Handle_CPC(instruction, this); return true;
+			case CPSE: Handle_CPSE(instruction, cycles, this); return true;
 			case EOR: Handle_EOR(instruction, this); return true;
 			case OR: Handle_OR(instruction, this); return true;
 			case SBC: Handle_SBC(instruction, this); return true;
 			case SUB: Handle_SUB(instruction, this); return true;
 			default: break;
 		}
-		
+
 		switch (instruction & 0b1111'0000'0000'0000)
 		{
 			case ANDI: Handle_ANDI(instruction, this); return true;
+			case CPI: Handle_CPI(instruction, this); return true;
 			case ORI: Handle_ORI(instruction, this); return true;
 			case SBCI: Handle_SBCI(instruction, this); return true;
 			case SUBI: Handle_SUBI(instruction, this); return true;
 			default: break;
+		}
+
+		// I don't know how to implement the break instruction
+		if (instruction == BREAK) {
+			return true;
 		}
 
 		return false;

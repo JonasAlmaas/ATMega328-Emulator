@@ -179,7 +179,7 @@ namespace ATMega328Emulator {
 			StatusFlag::N::MSBSet(cpu, R);
 			StatusFlag::Z::ByteNullRes(cpu, R);
 			StatusFlag::C::ByteCarryMSB(cpu, R, *Rd, *Rr);
-		
+
 			*Rd = R;
 		}
 
@@ -190,17 +190,17 @@ namespace ATMega328Emulator {
 
 			Word* Rdh = ((Word*)&cpu->R24) + d;
 			Word R = *Rdh + K;
-			
+
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::WordAddTwosComplementOverflow(cpu, R, *Rdh);
 			StatusFlag::N::MSBSet(cpu, (R & 0xFF00) >> 8);
 			StatusFlag::Z::WordNullRes(cpu, R);
 			StatusFlag::C::WordCarryMSB(cpu, R, *Rdh);
-		
+
 			*Rdh = R;
 			--cycles;
 		}
-	
+
 		void Handle_AND(Word instruction, CPU* cpu)
 		{
 			Byte d = (instruction & 0b1'1111'0000) >> 4;
@@ -208,30 +208,30 @@ namespace ATMega328Emulator {
 
 			Byte* Rd = &cpu->R00 + d;
 			Byte* Rr = &cpu->R00 + r;
-		
+
 			Byte R = *Rd & *Rr;
-	
+
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
 			StatusFlag::Z::ByteNullRes(cpu, R);
-	
+
 			*Rd = R;
 		}
-	
+
 		void Handle_ANDI(Word instruction, CPU* cpu)
 		{
 			Byte d = (instruction & 0b1111'0000) >> 4;
 			Byte K = (instruction & 0xF) | ((instruction & 0xF00) >> 4);
-		
+
 			Byte* Rd = &cpu->R16 + d;
 			Byte R = *Rd & K;
-		
+
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
 			StatusFlag::Z::ByteNullRes(cpu, R);
-		
+
 			*Rd = R;
 		}
 
@@ -240,13 +240,13 @@ namespace ATMega328Emulator {
 			Byte d = (instruction & 0b1'1111'0000) >> 4;
 
 			Byte* Rd = &cpu->R00 + d;
-			Byte R = *Rd >> 1;
+			Byte R = (*Rd >> 1) | (*Rd & 0x80);
 
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::N::MSBSet(cpu, R);
 			StatusFlag::Z::ByteNullRes(cpu, R);
 			cpu->SREG.C = *Rd & 0x1;
-			
+
 			cpu->SREG.V = cpu->SREG.N ^ cpu->SREG.C; // Has to be done at the end
 
 			*Rd = R;
@@ -268,6 +268,51 @@ namespace ATMega328Emulator {
 
 			*Rd = R;
 		}
+
+		void Handle_BRBC(Word instruction, int& cycles, CPU* cpu)
+		{
+			char k = ((instruction & 0b1'1111'1000) >> 3) | ((instruction & 0b10'0000'0000) >> 2);
+			Byte s = instruction & 0b111;
+			
+			if (((*(Byte*)&cpu->SREG) & (1 << s)) == 0) { // Bit in register is cleared
+				cpu->PC += k;
+				--cycles;
+			}
+		}
+
+		void Handle_BRBS(Word instruction, int& cycles, CPU* cpu)
+		{
+			char k = ((instruction & 0b1'1111'1000) >> 3) | ((instruction & 0b10'0000'0000) >> 2);
+			Byte s = instruction & 0b111;
+
+			if ((*(Byte*)&cpu->SREG) & (1 << s)) { // Bit in register is set
+				cpu->PC += k;
+				--cycles;
+			}
+		}
+
+		void Handle_BSET(Word instruction, CPU* cpu)
+		{
+			Byte s = (instruction & 0b111'0000) >> 4;
+			*(Byte*)&cpu->SREG |= 1 << s;
+		}
+
+		void Handle_BST(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte b = instruction & 0b111;
+
+			Byte* Rd = &cpu->R00 + d;
+			cpu->SREG.T = (*Rd >> b) & 0b1;
+		}
+
+		void Handle_CBI(Word instruction, CPU* cpu)
+		{
+			Byte A = (instruction & 0b1111'1000) >> 3;
+			Byte b = instruction & 0b111;
+
+			*((Byte*)&cpu->IO + A) &= ~(1 << b);
+		}
 		
 		void Handle_COM(Word instruction, CPU* cpu)
 		{
@@ -283,6 +328,73 @@ namespace ATMega328Emulator {
 			StatusFlag::C::Set(cpu, 1);
 			
 			*Rd = R;
+		}
+
+		void Handle_CP(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			Byte R = *Rd - *Rr;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, *Rr);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
+		}
+
+		void Handle_CPC(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			Byte R = *Rd - *Rr - cpu->SREG.C;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, *Rr);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
+		}
+
+		void Handle_CPI(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte K = (instruction & 0b1111) | ((instruction & 0b1111'0000'0000) >> 4);
+			
+			Byte* Rd = &cpu->R00 + d;
+
+			Byte R = *Rd - K;
+
+			StatusFlag::H::BorrowBit3(cpu, R, *Rd, K);
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
+		}
+
+		void Handle_CPSE(Word instruction, int& cycles, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			if (*Rd == *Rr) {
+				++cpu->PC;
+				--cycles;
+			}
 		}
 
 		void Handle_DEC(Word instruction, CPU* cpu)
@@ -302,8 +414,8 @@ namespace ATMega328Emulator {
 
 		void Handle_EOR(Word instruction, CPU* cpu)
 		{
-			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
 			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
 
 			Byte* Rd = &cpu->R00 + d;
 			Byte* Rr = &cpu->R00 + r;
