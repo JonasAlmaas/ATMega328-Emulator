@@ -38,19 +38,32 @@ namespace ATMega328Emulator {
 	{
 		using namespace Instruction;
 		
+		switch (instruction & 0b1111'1110'1000'1111)
+		{
+			case BCLR: Handle_BCLR(instruction, this); return true;
+			default: break;
+		}
+
+		switch (instruction & 0b1111'1110'0000'1111)
+		{
+			case ASR: Handle_ASR(instruction, this); return true;
+			case COM: Handle_COM(instruction, this); return true;
+			case DEC: Handle_DEC(instruction, this); return true;
+			case INC: Handle_INC(instruction, this); return true;
+			case NEG: Handle_NEG(instruction, this); return true;
+			default: break;
+		}
+
 		switch (instruction & 0b1111'1111'0000'0000)
 		{
 			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
 			case SBI: Handle_SBI(instruction, this); return true;
 			default: break;
 		}
-		
-		switch (instruction & 0b1111'1110'0000'1111)
+
+		switch (instruction & 0b1111'1110'0000'1000)
 		{
-			case COM: Handle_COM(instruction, this); return true;
-			case DEC: Handle_DEC(instruction, this); return true;
-			case INC: Handle_INC(instruction, this); return true;
-			case NEG: Handle_NEG(instruction, this); return true;
+			case BLD: Handle_BLD(instruction, this); return true;
 			default: break;
 		}
 

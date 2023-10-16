@@ -234,6 +234,40 @@ namespace ATMega328Emulator {
 		
 			*Rd = R;
 		}
+
+		void Handle_ASR(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd >> 1;
+
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::N::MSBSet(cpu, R);
+			StatusFlag::Z::ByteNullRes(cpu, R);
+			cpu->SREG.C = *Rd & 0x1;
+			
+			cpu->SREG.V = cpu->SREG.N ^ cpu->SREG.C; // Has to be done at the end
+
+			*Rd = R;
+		}
+
+		void Handle_BCLR(Word instruction, CPU* cpu)
+		{
+			Byte s = (instruction & 0b111'0000) >> 4;
+			*(Byte*)&cpu->SREG &= ~(1 << s);
+		}
+
+		void Handle_BLD(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte b = instruction & 0b111;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd | cpu->SREG.T << b;
+
+			*Rd = R;
+		}
 		
 		void Handle_COM(Word instruction, CPU* cpu)
 		{

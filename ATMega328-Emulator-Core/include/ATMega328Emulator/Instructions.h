@@ -2,6 +2,14 @@
 
 #include "ATMega328Emulator/CPU.h"
 
+/*
+ * Instructions w/o testing
+ *
+ * ASR
+ * BCLR
+ * BLD
+ */
+
 namespace ATMega328Emulator {
 	
 	namespace Instruction {
@@ -11,6 +19,7 @@ namespace ATMega328Emulator {
 		// K - Constant data
 		// k - Constant address
 		// b - Bit in the Register File or I/O Register (3-bit)
+		// s - Bit in the Status Register (3-bit)
 
 		// A - I/O location address
 	
@@ -20,6 +29,9 @@ namespace ATMega328Emulator {
 			ADIW = 0b1001'0110'0000'0000, // ADIW - Add Immediate to Word         - 1001'0110'KKdd'KKKK
 			AND  = 0b0010'0000'0000'0000, // AND  - Logical AND                   - 0010'00rd'dddd'rrrr
 			ANDI = 0b0111'0000'0000'0000, // ANDI - Logical AND with Immediate    - 0111'KKKK'dddd'KKKK
+			ASR  = 0b1001'0100'0000'0101, // ASR  - Arithmetic Shift Right        - 1001'010d'dddd'0101
+			BCLR = 0b1001'0100'1000'1000, // BCLR - Bit Clear in SREG             - 1001'0100'1sss'1000
+			BLD  = 0b1111'1000'0000'0000, // BLD  - Bit Load from the T Flag      - 1111'100d'dddd'0bbb
 			                              // CBR  - Clear Bits in Register - ANDI Rd,(0xFF-K) (Handled by assembler)
 			                              // CLR  - Clear Register - EOR Rd,Rd (Handled by assembler)
 			COM  = 0b1001'0100'0000'0000, // COM  - One's Complement              - 1001'010d'dddd'0000
@@ -52,7 +64,16 @@ namespace ATMega328Emulator {
 
 		// ANDI - Logical AND with Immediate
 		void Handle_ANDI(Word instruction, CPU* cpu);
-		
+
+		// ASR - Arithmetic Shift Right
+		void Handle_ASR(Word instruction, CPU* cpu);
+
+		// BCLR - Bit Clear in SREG
+		void Handle_BCLR(Word instruction, CPU* cpu);
+
+		// BLD - Bit Load from the T Flag
+		void Handle_BLD(Word instruction, CPU* cpu);
+
 		// COM - One's Complement
 		void Handle_COM(Word instruction, CPU* cpu);
 
