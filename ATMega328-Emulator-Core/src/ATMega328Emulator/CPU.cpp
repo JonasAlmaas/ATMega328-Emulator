@@ -38,6 +38,22 @@ namespace ATMega328Emulator {
 	{
 		using namespace Instruction;
 		
+		switch (instruction & 0b1111'1111'0000'0000)
+		{
+			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
+			case SBI: Handle_SBI(instruction, this); return true;
+			default: break;
+		}
+		
+		switch (instruction & 0b1111'1110'0000'1111)
+		{
+			case COM: Handle_COM(instruction, this); return true;
+			case DEC: Handle_DEC(instruction, this); return true;
+			case INC: Handle_INC(instruction, this); return true;
+			case NEG: Handle_NEG(instruction, this); return true;
+			default: break;
+		}
+
 		switch (instruction & 0b1111'1100'0000'0000)
 		{
 			case ADC: Handle_ADC(instruction, this); return true;
@@ -50,13 +66,6 @@ namespace ATMega328Emulator {
 			default: break;
 		}
 		
-		switch (instruction & 0b1111'1111'0000'0000)
-		{
-			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
-			case SBI: Handle_SBI(instruction, this); return true;
-			default: break;
-		}
-		
 		switch (instruction & 0b1111'0000'0000'0000)
 		{
 			case ANDI: Handle_ANDI(instruction, this); return true;
@@ -65,16 +74,7 @@ namespace ATMega328Emulator {
 			case SUBI: Handle_SUBI(instruction, this); return true;
 			default: break;
 		}
-		
-		switch (instruction & 0b1111'1110'0000'1111)
-		{
-			case COM: Handle_COM(instruction, this); return true;
-			case DEC: Handle_DEC(instruction, this); return true;
-			case INC: Handle_INC(instruction, this); return true;
-			case NEG: Handle_NEG(instruction, this); return true;
-			default: break;
-		}
-		
+
 		return false;
 	}
 

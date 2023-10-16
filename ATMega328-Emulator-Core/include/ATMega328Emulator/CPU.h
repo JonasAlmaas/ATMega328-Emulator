@@ -119,7 +119,10 @@ namespace ATMega328Emulator {
 		} IO;
 
 		// Program Counter
-		Word PC;
+		union {
+			struct { Byte PCL, PCH; };
+			Word PC;
+		};
 
 		// Stack Pointer
 		union {
