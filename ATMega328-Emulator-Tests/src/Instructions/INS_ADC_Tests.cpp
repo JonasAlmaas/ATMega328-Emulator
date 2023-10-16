@@ -10,13 +10,11 @@ TEST_F(ATMega328, Test_INS_ADC)
 	cpu.R02 = 0x2;
 	cpu.SREG.C = 1;
 
-	constexpr Byte a = 0x9 + 0x2 + 1;
-
 	// adc r1,r2 ; Add r2 to r1 with carry high byte
 	constexpr Word instruction =
 		Instruction::ADC
 		| 0b1'0000 // Rd = R1
-		| 0b10; // Rr = R2
+		| 0b10;    // Rr = R2
 
 	int dummyCycles = 0;
 	memory.WriteWord(instruction, 0x0, dummyCycles);

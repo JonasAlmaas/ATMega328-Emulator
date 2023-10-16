@@ -141,7 +141,7 @@ namespace ATMega328Emulator {
 			Byte C : 1; // Carry Flag
 		} SREG;
 		
-		Byte SRAM[SRAM_SIZE]; // Internal SRAM (Should be at an offset of 0x0100)
+		Byte SRAM[SRAM_SIZE]; // Internal SRAM (Should be at an offset of 0x100)
 		
 		Byte EEPROM[EEPROM_SIZE];
 
