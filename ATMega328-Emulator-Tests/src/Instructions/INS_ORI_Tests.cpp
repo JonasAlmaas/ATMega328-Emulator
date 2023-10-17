@@ -23,16 +23,16 @@ TEST_F(ATMega328, Test_INS_ORI)
 	// Assert
 	EXPECT_EQ(cpu.R20, 0b1110);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
-	EXPECT_EQ(cpu.SREG.H, cpuCopy.SREG.H);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.H, cpuCopy.IO.SREG.H);
 
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_FALSE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_FALSE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
 
-	EXPECT_EQ(cpu.SREG.C, cpuCopy.SREG.C);
+	EXPECT_EQ(cpu.IO.SREG.C, cpuCopy.IO.SREG.C);
 }
 
 TEST_F(ATMega328, Test_INS_ORI_Zero)
@@ -56,16 +56,16 @@ TEST_F(ATMega328, Test_INS_ORI_Zero)
 	// Assert
 	EXPECT_EQ(cpu.R20, 0x0);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
-	EXPECT_EQ(cpu.SREG.H, cpuCopy.SREG.H);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.H, cpuCopy.IO.SREG.H);
 
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_FALSE(cpu.SREG.N);
-	EXPECT_TRUE(cpu.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_FALSE(cpu.IO.SREG.N);
+	EXPECT_TRUE(cpu.IO.SREG.Z);
 
-	EXPECT_EQ(cpu.SREG.C, cpuCopy.SREG.C);
+	EXPECT_EQ(cpu.IO.SREG.C, cpuCopy.IO.SREG.C);
 }
 
 TEST_F(ATMega328, Test_INS_ORI_MSB)
@@ -89,14 +89,14 @@ TEST_F(ATMega328, Test_INS_ORI_MSB)
 	// Assert
 	EXPECT_EQ(cpu.R20, 0x8F);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
-	EXPECT_EQ(cpu.SREG.H, cpuCopy.SREG.H);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.H, cpuCopy.IO.SREG.H);
 
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_TRUE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_TRUE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
 
-	EXPECT_EQ(cpu.SREG.C, cpuCopy.SREG.C);
+	EXPECT_EQ(cpu.IO.SREG.C, cpuCopy.IO.SREG.C);
 }

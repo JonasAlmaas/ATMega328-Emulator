@@ -23,15 +23,15 @@ TEST_F(ATMega328, Test_INS_SBCI)
 	// Assert
 	EXPECT_EQ(cpu.R22, 0xF1 - 0x0F);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
 
-	EXPECT_TRUE(cpu.SREG.H);
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_TRUE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
-	EXPECT_FALSE(cpu.SREG.C);
+	EXPECT_TRUE(cpu.IO.SREG.H);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_TRUE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.C);
 }
 
 TEST_F(ATMega328, Test_INS_SBCI_Carry)
@@ -39,7 +39,7 @@ TEST_F(ATMega328, Test_INS_SBCI_Carry)
 	CPU cpuCopy = cpu;
 
 	cpu.R18 = 0x9;
-	cpu.SREG.C = 1;
+	cpu.IO.SREG.C = 1;
 
 	// sbci r18,0x2 ; Subtract 0x2 from r18 with carry high byte
 	constexpr Word instruction =
@@ -56,13 +56,13 @@ TEST_F(ATMega328, Test_INS_SBCI_Carry)
 	// Assert
 	EXPECT_EQ(cpu.R18, 0x6);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
 
-	EXPECT_FALSE(cpu.SREG.I);
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_FALSE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
-	EXPECT_FALSE(cpu.SREG.C);
+	EXPECT_FALSE(cpu.IO.SREG.I);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_FALSE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.C);
 }

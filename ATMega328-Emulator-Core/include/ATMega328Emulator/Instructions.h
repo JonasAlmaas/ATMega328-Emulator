@@ -23,18 +23,18 @@
  * EICALL (Not sure how to implement)
  * EIJMP (Not sure how to implement)
  * ELPM (Not sure how to implement) (This one is strange)
- * FMUL (Not implemented)
- * FMULS (Not implemented)
- * FMULSU (Not implemented)
+ * FMUL
+ * FMULS
+ * FMULSU
  * ICALL (Not implemented)
  * IN (Not implemented)
  * JMP (Not implemented)
- * LAC (Not implemented)
- * LAS (Not implemented)
- * LAT (Not implemented)
+ * LAC
+ * LAS
+ * LAT
  * LD (Not sure how to implement) (This one is strange)
- * LDI (Not implemented)
- * LDS (Not implemented)
+ * LDI
+ * LDS
  * LPM (Not sure how to implement) (This one is strange)
  * LSL (Not implemented)
  * LSR (Not implemented)
@@ -199,8 +199,32 @@ namespace ATMega328Emulator {
 		// EOR - Logical Exclusive OR
 		void Handle_EOR(Word instruction, CPU* cpu);
 
+		// FMUL - Fractional Multiply Unsigned
+		void Handle_FMUL(Word instruction, int& cycles, CPU* cpu);
+
+		// FMULS - Fractional Multiply Signed
+		void Handle_FMULS(Word instruction, int& cycles, CPU* cpu);
+
+		// FMULSU - Fractional Multiply Signed with Unsigned
+		void Handle_FMULSU(Word instruction, int& cycles, CPU* cpu);
+
 		// INC - Increment
 		void Handle_INC(Word instruction, CPU* cpu);
+
+		// LAC - Load and Clear
+		void Handle_LAC(Word instruction, int& cycles, CPU* cpu);
+
+		// LAS - Load and Set
+		void Handle_LAS(Word instruction, int& cycles, CPU* cpu);
+
+		// LAT - Load and Toggle
+		void Handle_LAT(Word instruction, int& cycles, CPU* cpu);
+
+		// LDI - Load Immediate
+		void Handle_LDI(Word instruction, CPU* cpu);
+
+		// LDS - Load Direct from Data Space
+		void Handle_LDS(Word instruction, int& cycles, CPU* cpu, Memory& memory);
 
 		// NEG - Two's Complement
 		void Handle_NEG(Word instruction, CPU* cpu);

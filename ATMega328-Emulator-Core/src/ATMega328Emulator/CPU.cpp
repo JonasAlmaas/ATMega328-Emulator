@@ -10,13 +10,13 @@ namespace ATMega328Emulator {
 	{
 		// I have no idea if this is correct
 		PC = 0x0;
-		SP = 0x100; // First address of SRAM (Not true atm)
+		IO.SP = 0x100; // First address of SRAM (Not true atm)
 
 		IO.PORTB = IO.PORTC = IO.PORTD = 0;
 		IO.DDRB = IO.DDRC = IO.DDRD = 0;
 		IO.PINB = IO.PINC = IO.PIND = 0;
 
-		SREG.I = SREG.T = SREG.H = SREG.S = SREG.V = SREG.N = SREG.Z = SREG.C = 0;
+		*(Byte*)&IO.SREG = 0;
 		
 		memory.Initialize();
 	}
@@ -37,16 +37,16 @@ namespace ATMega328Emulator {
 	bool CPU::handleInstruction(Word instruction, int& cycles, Memory& memory)
 	{
 		using namespace Instruction;
-
-		switch (instruction & 0b1111'1110'1000'1111)
-		{
-			case BCLR: Handle_BCLR(instruction, this); return true;
-			default: break;
-		}
 		
 		switch (instruction & 0b1111'1111'1000'1111)
 		{
 			case BSET: Handle_BSET(instruction, this); return true;
+			default: break;
+		}
+
+		switch (instruction & 0b1111'1110'1000'1111)
+		{
+			case BCLR: Handle_BCLR(instruction, this); return true;
 			default: break;
 		}
 		
@@ -56,7 +56,20 @@ namespace ATMega328Emulator {
 			case COM: Handle_COM(instruction, this); return true;
 			case DEC: Handle_DEC(instruction, this); return true;
 			case INC: Handle_INC(instruction, this); return true;
+			case LAC: Handle_LAC(instruction, cycles, this); return true;
+			case LAS: Handle_LAS(instruction, cycles, this); return true;
+			case LAT: Handle_LAT(instruction, cycles, this); return true;
+			case LDI: Handle_LDI(instruction, this); return true;
+			case LDS: Handle_LDS(instruction, cycles, this, memory); return true;
 			case NEG: Handle_NEG(instruction, this); return true;
+			default: break;
+		}
+		
+		switch (instruction & 0b1111'1111'1000'1000)
+		{
+			case FMUL: Handle_FMUL(instruction, cycles, this); return true;
+			case FMULS: Handle_FMULS(instruction, cycles, this); return true;
+			case FMULSU: Handle_FMULSU(instruction, cycles, this); return true;
 			default: break;
 		}
 		

@@ -22,16 +22,16 @@ TEST_F(ATMega328, Test_INS_INC)
 	// Assert
 	EXPECT_EQ(cpu.R04, 0xF2);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
-	EXPECT_EQ(cpu.SREG.H, cpuCopy.SREG.H);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.H, cpuCopy.IO.SREG.H);
 
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_FALSE(cpu.SREG.V);
-	EXPECT_TRUE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_FALSE(cpu.IO.SREG.V);
+	EXPECT_TRUE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
 
-	EXPECT_EQ(cpu.SREG.C, cpuCopy.SREG.C);
+	EXPECT_EQ(cpu.IO.SREG.C, cpuCopy.IO.SREG.C);
 }
 
 TEST_F(ATMega328, Test_INS_INC_TwosComplementOverflow)
@@ -54,14 +54,14 @@ TEST_F(ATMega328, Test_INS_INC_TwosComplementOverflow)
 	// Assert
 	EXPECT_EQ(cpu.R04, 0x80);
 
-	EXPECT_EQ(cpu.SREG.I, cpuCopy.SREG.I);
-	EXPECT_EQ(cpu.SREG.T, cpuCopy.SREG.T);
-	EXPECT_EQ(cpu.SREG.H, cpuCopy.SREG.H);
+	EXPECT_EQ(cpu.IO.SREG.I, cpuCopy.IO.SREG.I);
+	EXPECT_EQ(cpu.IO.SREG.T, cpuCopy.IO.SREG.T);
+	EXPECT_EQ(cpu.IO.SREG.H, cpuCopy.IO.SREG.H);
 
-	EXPECT_FALSE(cpu.SREG.S);
-	EXPECT_TRUE(cpu.SREG.V);
-	EXPECT_TRUE(cpu.SREG.N);
-	EXPECT_FALSE(cpu.SREG.Z);
+	EXPECT_FALSE(cpu.IO.SREG.S);
+	EXPECT_TRUE(cpu.IO.SREG.V);
+	EXPECT_TRUE(cpu.IO.SREG.N);
+	EXPECT_FALSE(cpu.IO.SREG.Z);
 
-	EXPECT_EQ(cpu.SREG.C, cpuCopy.SREG.C);
+	EXPECT_EQ(cpu.IO.SREG.C, cpuCopy.IO.SREG.C);
 }
