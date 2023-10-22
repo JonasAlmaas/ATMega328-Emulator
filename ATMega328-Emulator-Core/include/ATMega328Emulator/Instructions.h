@@ -45,6 +45,28 @@
  * MULSU
  * NOP
  * OUT
+ * POP (Not implemented)
+ * PUSH (Not implemented)
+ * RCALL (Not implemented)
+ * RET (Not implemented)
+ * RETI (Not implemented)
+ * RJMP (Not implemented)
+ * ROL (Not implemented)
+ * ROR (Not implemented)
+ * SBIC (Not implemented)
+ * SBIS (Not implemented)
+ * SBIW (Not implemented)
+ * SEI (Not implemented)
+ * SBRC (Not implemented)
+ * SBRS (Not implemented)
+ * SLEEP (Not sure how to implement) (This one is strange)
+ * SPM (Not sure how to implement) (This one is strange)
+ * SPM (Not sure how to implement) (This one is strange)
+ * ST (Not sure how to implement) (This one is strange)
+ * STS (Not sure how to implement) (This one is strange)
+ * SWAP (Not implemented)
+ * WDR (Not implemented)
+ * XCH (Not implemented)
  */
 
 namespace ATMega328Emulator {
@@ -72,7 +94,7 @@ namespace ATMega328Emulator {
 			BRBC   = 0b1111'0100'0000'0000, // BRBC   - Branch if Bit in SREG is Clear           - 1111'01kk'kkkk'ksss
 			BRBS   = 0b1111'0000'0000'0000, // BRBS   - Branch if Bit in SREG is Set             - 1111'00kk'kkkk'ksss
 			                                // BRCC   - Branch if Carry Clear                    - BRBC 0,k
-			                                // BRBS   - Branch if Carry Set                      - BRBS 0,k
+			                                // BRCS   - Branch if Carry Set                      - BRBS 0,k
 			BREAK  = 0b1001'0101'1001'1000, // BREAK  - Break                                    - 1001'0101'1001'1000
 			                                // BREQ   - Branch if Equal                          - BRBS 1,k
 			                                // BRGE   - Branch if Greater or Equal (Signed)      - BRBC 4,k
@@ -142,14 +164,42 @@ namespace ATMega328Emulator {
 			OR     = 0b0010'1000'0000'0000, // OR     - Logical OR                               - 0010'10rd'dddd'rrrr
 			ORI    = 0b0110'0000'0000'0000, // ORI    - Logical OR with Immediate                - 0110'KKKK'dddd'KKKK
 			OUT    = 0b1011'1000'0000'0000, // OUT    - Store Register to I/O Location           - 1011'1AAr'rrrr'AAAA
+			POP    = 0b1001'0000'0000'1111, // POP    - Pop Register from Stack                  - 1001'000d'dddd'1111
+			PUSH   = 0b1001'0010'0000'1111, // PUSH   - Push Register to Stack                   - 1001'001d'dddd'1111
+			RCALL  = 0b1101'0000'0000'0000, // RCALL  - Relative Call to Subroutine              - 1101'kkkk'kkkk'kkkk
+			RET    = 0b1001'0101'0000'1000, // RET    - Return from Subroutine                   - 1001'0101'0000'1000
+			RETI   = 0b1001'0101'0001'1000, // RETI   - Return from Interrupt                    - 1001'0101'0001'1000
+			RJMP   = 0b1100'0000'0000'0000, // RJMP   - Relative Jump                            - 1100'kkkk'kkkk'kkkk
+			ROL    = 0b0001'1100'0000'0000, // ROL    - Rotate Left through Carry                - 0001'11dd'dddd'dddd
+			ROR    = 0b1001'0100'0000'0111, // ROR    - Rotate Right through Carry               - 1001'010d'dddd'0111
 			SBC    = 0b0000'1000'0000'0000, // SBC    - Subtract with Carry                      - 0000'10rd'dddd'rrrr
 			SBCI   = 0b0100'0000'0000'0000, // SBCI   - Subtract Immediate with Carry            - 0100'KKKK'dddd'KKKK
 			SBI    = 0b1001'1010'0000'0000, // SBI    - Set Bit in I/O Register                  - 1001'1010'AAAA'Abbb
+			SBIC   = 0b1001'1001'0000'0000, // SBIC   - Skip if Bit in I/O Register is Cleared   - 1001'1001'AAAA'Abbb
+			SBIS   = 0b1001'1011'0000'0000, // SBIS   - Skip if Bit in I/O Register is Set       - 1001'1011'AAAA'Abbb
+			SBIW   = 0b1001'0111'0000'0000, // SBIW   - Subtract Immediate from Word             - 1001'0111'KKdd'KKKK
 			                                // SBR    - Set Bits in Register                     - ORI Rd,K
+			SBRC   = 0b1111'1100'0000'0000, // SBRC   - Skip if Bit in Register is Cleared       - 1111'110r'rrrr'0bbb
+			SBRS   = 0b1111'1110'0000'0000, // SBRS   - Skip if Bit in Register is Set           - 1111'111r'rrrr'0bbb
+			                                // SEC    - Set Carry Flag                           - BSET 0
+			                                // SEH    - Set Half Carry Flag                      - BSET 5
+			SEI    = 0b1001'0100'0111'1000, // SEI    - Set Global Interrupt Flag                - 1001'0100'0111'1000
+			                                // SEN    - Set Negative Flag                        - BSET 2
 			                                // SER    - Set all Bits in Register                 - LDI Rd,0xFF
+			                                // SES    - Set Sign Flag                            - BSET 4
+			                                // SET    - Set T Bit                                - BSET 6
+			                                // SEV    - Set Overflow Flag                        - BSET 3
+			                                // SEZ    - Set Zero Flag                            - BSET 1
+			SLEEP  = 0b1001'0101'1000'1000, // SLEEP  - Sleep                                    - 1001'0101'1000'1000
+			SPM    = 0b1001'0101'1110'1000, // SPM    - Store Program Memory                     - 1001'0101'1110'1000
+			ST     = 0, // TODO             // ST     - Store Indirect From Register To Data Space Using Index X
+			STS    = 0, // TODO             // STS    - Store Direct to Data Space
 			SUB    = 0b0001'1000'0000'0000, // SBC    - Subtract without Carry                   - 0001'10rd'dddd'rrrr
-			SUBI   = 0b0101'0000'0000'0000; // SUBI   - Subtract Immediate                       - 0101'KKKK'dddd'KKKK
+			SUBI   = 0b0101'0000'0000'0000, // SUBI   - Subtract Immediate                       - 0101'KKKK'dddd'KKKK
+			SWAP   = 0b1001'0100'0000'0010, // SWAP   - Swap Nibbles                             - 1001'010d'dddd'0010
 			                                // TST    - Test for Zero or Minus                   - AND Rd,Rd
+			WDR    = 0b1001'0101'1010'1000, // WDR    - Watchdog Reset                           - 1001'0101'1010'1000
+			XCH    = 0b1001'0010'0000'0100; // XCH    - Exchange                                 - 1001'001r'rrrr'0100
 
 		// ADC - Add with Carry
 		void Handle_ADC(Word instruction, CPU* cpu);
