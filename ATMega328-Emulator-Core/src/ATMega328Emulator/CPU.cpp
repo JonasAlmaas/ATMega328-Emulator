@@ -37,6 +37,13 @@ namespace ATMega328Emulator {
 	bool CPU::handleInstruction(Word instruction, int& cycles, Memory& memory)
 	{
 		using namespace Instruction;
+
+		switch (instruction)
+		{
+			case BREAK: return true; // I don't know how to implement the break instruction
+			case NOP: return true;
+			default: break;
+		}
 		
 		switch (instruction & 0b1111'1111'1000'1111)
 		{
@@ -119,11 +126,6 @@ namespace ATMega328Emulator {
 			case SBCI: Handle_SBCI(instruction, this); return true;
 			case SUBI: Handle_SUBI(instruction, this); return true;
 			default: break;
-		}
-
-		// I don't know how to implement the break instruction
-		if (instruction == BREAK) {
-			return true;
 		}
 
 		return false;

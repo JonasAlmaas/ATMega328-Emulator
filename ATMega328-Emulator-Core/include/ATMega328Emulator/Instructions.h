@@ -43,6 +43,7 @@
  * MUL
  * MULS
  * MULSU
+ * NOP
  */
 
 namespace ATMega328Emulator {
@@ -136,6 +137,7 @@ namespace ATMega328Emulator {
 			MULS   = 0b0000'0010'0000'0000, // MULS   - Multiply Signed                          - 0000'0010'dddd'rrrr
 			MULSU  = 0b0000'0011'0000'0000, // MULSU  - Multiply Signed with Unsigned            - 0000'0011'0ddd'0rrr
 			NEG    = 0b1001'0100'0000'0001, // NEG    - Two's Complement                         - 1001'010d'dddd'0001
+			NOP    = 0b0000'0000'0000'0000, // NOP    - No Operation                             - 0000'0000'0000'0000
 			OR     = 0b0010'1000'0000'0000, // OR     - Logical OR                               - 0010'10rd'dddd'rrrr
 			ORI    = 0b0110'0000'0000'0000, // ORI    - Logical OR with Immediate                - 0110'KKKK'dddd'KKKK
 			SBC    = 0b0000'1000'0000'0000, // SBC    - Subtract with Carry                      - 0000'10rd'dddd'rrrr
