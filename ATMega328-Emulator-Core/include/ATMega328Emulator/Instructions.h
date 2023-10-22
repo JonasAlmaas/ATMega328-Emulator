@@ -44,6 +44,7 @@
  * MULS
  * MULSU
  * NOP
+ * OUT
  */
 
 namespace ATMega328Emulator {
@@ -140,6 +141,7 @@ namespace ATMega328Emulator {
 			NOP    = 0b0000'0000'0000'0000, // NOP    - No Operation                             - 0000'0000'0000'0000
 			OR     = 0b0010'1000'0000'0000, // OR     - Logical OR                               - 0010'10rd'dddd'rrrr
 			ORI    = 0b0110'0000'0000'0000, // ORI    - Logical OR with Immediate                - 0110'KKKK'dddd'KKKK
+			OUT    = 0b1011'1000'0000'0000, // OUT    - Store Register to I/O Location           - 1011'1AAr'rrrr'AAAA
 			SBC    = 0b0000'1000'0000'0000, // SBC    - Subtract with Carry                      - 0000'10rd'dddd'rrrr
 			SBCI   = 0b0100'0000'0000'0000, // SBCI   - Subtract Immediate with Carry            - 0100'KKKK'dddd'KKKK
 			SBI    = 0b1001'1010'0000'0000, // SBI    - Set Bit in I/O Register                  - 1001'1010'AAAA'Abbb
@@ -262,6 +264,9 @@ namespace ATMega328Emulator {
 
 		// ORI - Logical OR with Immediate
 		void Handle_ORI(Word instruction, CPU* cpu);
+
+		// OUT - Store Register to I/O Location
+		void Handle_OUT(Word instruction, CPU* cpu);
 
 		// SBC - Subtract with Carry
 		void Handle_SBC(Word instruction, CPU* cpu);

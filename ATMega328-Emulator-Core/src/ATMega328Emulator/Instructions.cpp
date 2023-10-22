@@ -724,6 +724,17 @@ namespace ATMega328Emulator {
 			*Rd = R;
 		}
 
+		void Handle_OUT(Word instruction, CPU* cpu)
+		{
+			Byte A = (instruction & 0b1111) | ((instruction & 0b110'0000'0000) >> 5);
+			Byte r = (instruction & 0b1111'0000) >> 4;
+
+			Byte* IO = (Byte*)&cpu->IO + A;
+			Byte* Rr = &cpu->R00 + r;
+
+			*IO = *Rr;
+		}
+
 		void Handle_SBC(Word instruction, CPU* cpu)
 		{
 			Byte d = (instruction & 0b1'1111'0000) >> 4;
