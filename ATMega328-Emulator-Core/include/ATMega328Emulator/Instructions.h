@@ -40,6 +40,9 @@
  * LSR
  * MOV
  * MOVW
+ * MUL
+ * MULS
+ * MULSU
  */
 
 namespace ATMega328Emulator {
@@ -129,6 +132,9 @@ namespace ATMega328Emulator {
 			LSR    = 0b1001'0100'0000'0110, // LSR    - Logical Shift Right                      - 1001'010d'dddd'0110
 			MOV    = 0b0010'1100'0000'0000, // MOV    - Copy Register                            - 0010'11rr'dddd'rrrr
 			MOVW   = 0b0000'0001'0000'0000, // MOVW   - Copy Register Word                       - 0000'0001'dddd'rrrr
+			MUL    = 0b1001'1100'0000'0000, // MUL    - Multiply Unsigned                        - 1001'11rd'dddd'rrrr
+			MULS   = 0b0000'0010'0000'0000, // MULS   - Multiply Signed                          - 0000'0010'dddd'rrrr
+			MULSU  = 0b0000'0011'0000'0000, // MULSU  - Multiply Signed with Unsigned            - 0000'0011'0ddd'0rrr
 			NEG    = 0b1001'0100'0000'0001, // NEG    - Two's Complement                         - 1001'010d'dddd'0001
 			OR     = 0b0010'1000'0000'0000, // OR     - Logical OR                               - 0010'10rd'dddd'rrrr
 			ORI    = 0b0110'0000'0000'0000, // ORI    - Logical OR with Immediate                - 0110'KKKK'dddd'KKKK
@@ -236,6 +242,15 @@ namespace ATMega328Emulator {
 
 		// MOVW - Copy Register Word
 		void Handle_MOVW(Word instruction, CPU* cpu);
+
+		// MUL - Multiply Unsigned
+		void Handle_MUL(Word instruction, int& cycles, CPU* cpu);
+
+		// MULS - Multiply Signed
+		void Handle_MULS(Word instruction, int& cycles, CPU* cpu);
+
+		// MULSU - Multiply Signed with Unsigned
+		void Handle_MULSU(Word instruction, int& cycles, CPU* cpu);
 
 		// NEG - Two's Complement
 		void Handle_NEG(Word instruction, CPU* cpu);

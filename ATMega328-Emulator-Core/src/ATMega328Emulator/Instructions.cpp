@@ -624,6 +624,54 @@ namespace ATMega328Emulator {
 
 			*Rd = *Rr;
 		}
+
+		void Handle_MUL(Word instruction, int& cycles, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+			Word R = *Rd * *Rr;
+
+			StatusFlag::C::MSBSet(cpu, R >> 8);
+			StatusFlag::Z::WordZeroRes(cpu, R);
+
+			*(Word*)&cpu->R00 = R;
+			--cycles;
+		}
+
+		void Handle_MULS(Word instruction, int& cycles, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte r = instruction & 0b1111;
+			
+			char* Rd = (char*)&cpu->R00 + d;
+			char* Rr = (char*)&cpu->R00 + r;
+			
+			short R = *Rd * *Rr;
+
+			StatusFlag::C::MSBSet(cpu, R >> 8);
+			StatusFlag::Z::WordZeroRes(cpu, R);
+
+			*(short*)&cpu->R00 = R;
+		}
+
+		void Handle_MULSU(Word instruction, int& cycles, CPU* cpu)
+		{
+			Byte d = (instruction & 0b111'0000) >> 4;
+			Byte r = instruction & 0b111;
+
+			char* Rd = (char*)cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			short R = *Rd * *Rr;
+
+			StatusFlag::C::MSBSet(cpu, R >> 8);
+			StatusFlag::Z::WordZeroRes(cpu, R);
+
+			*(short*)&cpu->R00 = R;
+		}
 		
 		void Handle_NEG(Word instruction, CPU* cpu)
 		{

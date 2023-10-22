@@ -71,6 +71,7 @@ namespace ATMega328Emulator {
 			case FMUL: Handle_FMUL(instruction, cycles, this); return true;
 			case FMULS: Handle_FMULS(instruction, cycles, this); return true;
 			case FMULSU: Handle_FMULSU(instruction, cycles, this); return true;
+			case MULSU: Handle_MULSU(instruction, cycles, this); return true;
 			default: break;
 		}
 		
@@ -102,6 +103,8 @@ namespace ATMega328Emulator {
 			case CPSE: Handle_CPSE(instruction, cycles, this); return true;
 			case EOR: Handle_EOR(instruction, this); return true;
 			case MOV: Handle_MOV(instruction, this); return true;
+			case MUL: Handle_MUL(instruction, cycles, this); return true;
+			case MULS: Handle_MULS(instruction, cycles, this); return true;
 			case OR: Handle_OR(instruction, this); return true;
 			case SBC: Handle_SBC(instruction, this); return true;
 			case SUB: Handle_SUB(instruction, this); return true;
