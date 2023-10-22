@@ -127,32 +127,18 @@ namespace ATMega328Emulator {
 			Byte _14;
 
 			Byte TIFR0;  // 15.9.7  - 0x35 - Timer/Counter 0 Interrupt Flag Register
+			Byte TIFR1;  // 16.11.9 - 0x36 - Timer/Counter 1 Interrupt Flag Register
+			Byte TIFR2;  // 18.11.7 - 0x37 - Timer/Counter 2 Interrupt Flag Register
 
-			Byte _16;
-			Byte _17;
 			Byte _18;
 			Byte _19;
 			Byte _1A;
 
 			Byte PCIFR;  // 13.2.5  - 0x3B - Pin Change Interrupt Flag Register
 			Byte EIFR;   // 13.2.3  - 0x3C - External Interrupt Flag Register
+			Byte EIMSK;  // 13.2.2  - 0x3D - External Interrupt Mask Register
 
-			#pragma pack(1)
-			union {      // 7.5.1   - 0x3D - Stack Pointer
-				struct {
-					union {
-						Byte SPL;    // 7.5.1  - 0x3D - Stack Pointer Low
-						Byte EIMSK;  // 13.2.2 - 0x3D - External Interrupt Mask Register
-					};
-
-					union {
-						Byte SPH;    // 7.5.1  - 0x3E - Stack Pointer High
-						Byte GPIOR0; // 8.6.6  - 0x3E - General Purpose I/O Register 0
-					};
-				};
-				Word SP;
-			};
-			#pragma pack()
+			Byte GPIOR0; // 8.6.6   - 0x3E - General Purpose I/O Register 0
 
 			Byte EECR;   // 8.6.3   - 0x3F - EEPROM Control Register
 			Byte EEDR;   // 8.6.2   - 0x40 - EEPROM Data Register
@@ -177,12 +163,15 @@ namespace ATMega328Emulator {
 			
 			Byte GPIOR1; // 8.6.5   - 0x4A - General Purpose I/O Register 1
 			Byte GPIOR2; // 8.6.4   - 0x4B - General Purpose I/O Register 2
-
-			Byte _2C;
-			Byte _2D;
-			Byte _2E;
+			
+			Byte SPCR;   // 19.5.1  - 0x4C - SPI Control Register
+			Byte SPSR;   // 19.5.2  - 0x4D - SPI Status Register
+			Byte SPDR;   // 19.5.3  - 0x4E - SPI Data Register
+			
 			Byte _2F;
-			Byte _30;
+
+			Byte ACSR;    // 23.3.2 - 0x50 - Analog Comparator Control and Status Register
+
 			Byte _31;
 			Byte _32;
 
@@ -192,14 +181,24 @@ namespace ATMega328Emulator {
 			Byte MCUCR;  // 10.11.2 - 0x55 - MCU Control Register
 
 			Byte _36;
-			Byte _37;
+
+			Byte SPMCSR; // 26.3.1  - 0x57 - Store Program Memory Control and Status Register
+
 			Byte _38;
 			Byte _39;
 			Byte _3A;
 			Byte _3B;
 			Byte _3C;
-			Byte _3D;
-			Byte _3E;
+
+			#pragma pack(1)
+			union {       // 7.5.1  - 0x5D - Stack Pointer
+				struct {
+					Byte SPL; //      0x5D - Stack Pointer Low
+					Byte SPH; //      0x5E - Stack Pointer High
+				};
+				Word SP;
+			};
+			#pragma pack()
 
 			struct StatusRegister {
 				Byte C : 1; // Carry Flag
@@ -210,13 +209,15 @@ namespace ATMega328Emulator {
 				Byte H : 1; // Half Carry Flag
 				Byte T : 1; // Transfer bit used by BLD and BST instructions
 				Byte I : 1; // Global Interrupt Enable/Disable Flag
-			} SREG;      // 7.3.1   - 0x5F - AVR Status Regiers
+			} SREG;      // 7.3.1   - 0x5F - AVR Status Register
+		} IO;
 
+		struct ExternalIORegisters {
 			struct WatchdogTimerControlRegister {
 				Byte WDP0 : 1; // Watchdog Timer Prescaler Bit 0
 				Byte WDP1 : 1; // Watchdog Timer Prescaler Bit 1
 				Byte WDP2 : 1; // Watchdog Timer Prescaler Bit 2
-				Byte WDE  : 1; // Watchdog System Reser Enable
+				Byte WDE : 1; // Watchdog System Reser Enable
 				Byte WDCE : 1; // Watchdog Change Enable
 				Byte WDP3 : 1; // Watchdog Timer Prescaler Bit 3
 				Byte WDIE : 1; // Watchdog Interrupt Enable
@@ -224,47 +225,154 @@ namespace ATMega328Emulator {
 			} WDTCSR;    // 11.9.2  - 0x60 - Watchdog Timer Control Register
 
 			Byte CLKPR;  // 9.12.2  - 0x61 - Clock Prescale Register
-			
-			Byte _42;
-			Byte _43;
-			
-			Byte PRR;    // 10.11.3 - 0x64 - Power Reduction Register
-		} IO;
 
-		struct ExternalIORegisters {
-			Byte _00;
+			Byte _02;
+			Byte _03;
+
+			Byte PRR;    // 10.11.3 - 0x64 - Power Reduction Register
+
+			Byte _05;
 
 			Byte OSCCAL; // 9.12.1  - 0x66 - Oscillator Calibration Register
 
-			Byte _02;
+			Byte _07;
 
 			Byte PCICR;  // 13.2.4  - 0x68 - Pin Change Interrupt Control Register
 			Byte EICRA;  // 12.2.1  - 0x69 - External Interrupt Control Register A
 
-			Byte _05;
+			Byte _0A;
 
 			Byte PCMSK0; // 13.2.8  - 0x6B - Pin Change Mask Register 0
 			Byte PCMSK1; // 13.2.7  - 0x6C - Pin Change Mask Register 1
 			Byte PCMSK2; // 13.2.6  - 0x6D - Pin Change Mask Register 2
 
 			Byte TIMSK0; // 15.9.6  - 0x6E - Timer/Counter 0 Interrupt Mask Register
+			Byte TIMSK1; // 16.11.8 - 0x6F - Timer/Counter 1 Interrupt Mask Register
+			Byte TIMSK2; // 18.11.6 - 0x70 - Timer/Counter 2 Interrupt Mask Register
 
-			Byte _0A;
+			Byte _11;
+			Byte _12;
+			Byte _13;
+			Byte _14;
+			Byte _15;
+			Byte _16;
+			Byte _17;
 
-			Byte TIMSK2; // 18.11.6 . 0x70 - Timer/Counter 2 Interrupt Mask Register
+			#pragma pack(1)
+			union {      // 24.9.3  - 0x78 - ADC Data Register
+				struct {
+					Byte ADCL; //     0x79 - ADC Data Register Low
+					Byte ADCH; //     0x79 - ADC Data Register High
+				};
+				Word ADC;
+			};
+			#pragma pack()
 
-			Byte unknown[63];
+			Byte ADCSRA; // 24.9.2  - 0x7A - ADC Control and Status Register A
+			Byte ADCSRB; // 23.3.1  - 0x7B - ADC Control and Status Register B
+
+			Byte ADMUX;  // 24.9.1  - 0x7C - ADC Multiplexer Selection Register
+
+			Byte _1D;
+
+			Byte DIDR0;  // 24.9.5  - 0x7E - Digital Input Disable Register 0
+			Byte DIDR1;  // 23.3.3  - 0x7F - Digital Input Disable Register 1
+
+			Byte TCCR1A; // 16.11.1 - 0x80 - Timer/Counter 1 Control Register A
+			Byte TCCR1B; // 16.11.2 - 0x81 - Timer/Counter 1 Control Register B
+			Byte TCCR1C; // 16.11.3 - 0x82 - Timer/Counter 1 Control Register C
+
+			Byte _23;
+			
+			#pragma pack(1)
+			union {      // 16.11.4 - 0x84 - Timer/Counter 1 Register
+				struct {
+					Byte TCNT1L; // 0x84 - Timer/Counter 1 Register Low
+					Byte TCNT1H; // 0x85 - Timer/Counter 1 Register High
+				};
+				Word TCNT1;
+			};
+			#pragma pack()
+
+			#pragma pack(1)
+			union {      // 16.11.7 - 0x86 - Input Capture Register 1
+				struct {
+					Byte ICR1L; // 0x86 - Input Capture Register 1 Low
+					Byte ICR1H; // 0x87 - Input Capture Register 1 High
+				};
+				Word ICR1;
+			};
+			#pragma pack()
+
+			#pragma pack(1)
+			union {      // 16.11.5 - 0x88 - Output Compare Register A
+				struct {
+					Byte OCR1AL; // 0x88 - Output Compare Register A Low
+					Byte OCR1AH; // 0x89 - Output Compare Register A High
+				};
+				Word OCR1A;
+			};
+			#pragma pack()
+
+			#pragma pack(1)
+			union {      // 16.11.6 - 0x8A - Output Compare Register B
+				struct {
+					Byte OCR1BL; // 0x88 - Output Compare Register B Low
+					Byte OCR1BH; // 0x89 - Output Compare Register B High
+				};
+				Word OCR1B;
+			};
+			#pragma pack()
+			
+			Byte _reserved_1[36];
 
 			Byte TCCR2A; // 18.11.1 - 0xB0 - Timer/Counter Control Register A
 			Byte TCCR2B; // 18.11.2 - 0xB1 - Timer/Counter Control Register B
 			Byte TCNT2;  // 18.11.3 - 0xB2 - Timer/Counter Register
+			
 			Byte OCR2A;  // 18.11.4 - 0xB3 - Output Compare Register A
 			Byte OCR2B;  // 18.11.5 - 0xB4 - Output Compare Register B
+
+			Byte _55;
+
+			Byte ASSR;   // 18.11.8 - 0xB6 - Asynchronous Status Register
+
+			Byte _57;
+
+			Byte TWBR;   // 22.9.1  - 0xB8 - TWI Bit Rate Register
+			Byte TWSR;   // 22.9.3  - 0xB9 - TWI Status Register
+			Byte TWAR;   // 22.9.5  - 0xBA - TWI (Slave) Address Register
+			Byte TWDR;   // 22.9.4  - 0xBB - TWI Data Register
+			Byte TWCR;   // 22.9.2  - 0xBC - TWI Control Register
+			Byte TWAMR;  // 22.9.6  - 0xBD - TWI (Slave) Address Mask Register
+
+			Byte _5E;
+			Byte _5F;
+
+			Byte UCSR0A; // 20.11.2 - 0xC0 - USART Control and Status Register n A
+			Byte UCSR0B; // 20.11.3 - 0xC1 - USART Control and Status Register n B
+			Byte UCSR0C; // 20.11.4 - 0xC2 - USART Control and Status Register n C
+
+			Byte _63;
+
+			#pragma pack(1)
+			union {      // 20.11.5 - 0xC4 - USART Baud Rate Registers
+				struct {
+					Byte UBRR0L; // 0xC4 - USART Baud Rate Registers Low
+					Byte UBRR0H; // 0xC5 - USART Baud Rate Registers High
+				};
+				Word UBRR0;
+			};
+			#pragma pack()
+
+			Byte UDR0;   // 20.11.1 - 0xC6 - USART I/O Data Register n
+
+			Byte _reserved_2[57];
 		} EXIO;
 		
 		Byte SRAM[SRAM_SIZE]; // Internal SRAM (Should be at an offset of 0x100)
 		
-		Byte EEPROM[EEPROM_SIZE];
+		Byte EEPROM[EEPROM_SIZE]; // Should be elsewhere?
 
 		// Program Counter (Should probably not be here)
 		union {
