@@ -36,8 +36,8 @@
  * LDI
  * LDS
  * LPM (Not sure how to implement) (This one is strange)
- * LSL (Not implemented)
- * LSR (Not implemented)
+ * LSL
+ * LSR
  * MOV (Not implemented)
  */
 
@@ -124,7 +124,7 @@ namespace ATMega328Emulator {
 			LDI    = 0b1110'0000'0000'0000, // LDI    - Load Immediate                           - 1110'KKKK'dddd'KKKK
 			LDS    = 0b1001'0000'0000'0000, // LDS    - Load Direct from Data Space              - 1001'000d'dddd'0000'kkkk'kkkk'kkkk'kkkk
 			LPM    = 0, // TODO             // LPM    - Load Program Memory
-			LSL    = 0b0000'1100'0000'0000, // LSL    - Logical Shift Left                       - 0000'11dd'dddd'dddd
+			LSL    = 0b0000'1100'0000'0000, // LSL    - Logical Shift Left                       - ADD Rd,Rd
 			LSR    = 0b1001'0100'0000'0110, // LSR    - Logical Shift Right                      - 1001'010d'dddd'0110
 			MOV    = 0b0010'1100'0000'0000, // MOV    - Copy Register                            - 0010'11rr'dddd'rrrr
 			NEG    = 0b1001'0100'0000'0001, // NEG    - Two's Complement                         - 1001'010d'dddd'0001
@@ -225,6 +225,9 @@ namespace ATMega328Emulator {
 
 		// LDS - Load Direct from Data Space
 		void Handle_LDS(Word instruction, int& cycles, CPU* cpu, Memory& memory);
+
+		// LSR - Logical Shift Right
+		void Handle_LSR(Word instruction, CPU* cpu);
 
 		// NEG - Two's Complement
 		void Handle_NEG(Word instruction, CPU* cpu);

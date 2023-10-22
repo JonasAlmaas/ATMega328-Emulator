@@ -61,6 +61,7 @@ namespace ATMega328Emulator {
 			case LAT: Handle_LAT(instruction, cycles, this); return true;
 			case LDI: Handle_LDI(instruction, this); return true;
 			case LDS: Handle_LDS(instruction, cycles, this, memory); return true;
+			case LSR: Handle_LSR(instruction, this); return true;
 			case NEG: Handle_NEG(instruction, this); return true;
 			default: break;
 		}

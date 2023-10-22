@@ -68,10 +68,20 @@ namespace ATMega328Emulator {
 						((~Rd & 0x80) & (Rr & 0x80) & (R & 0x80))
 					) >> 7;
 				}
+
+				static inline void NCXOR(CPU* cpu)
+				{
+					cpu->IO.SREG.V = cpu->IO.SREG.N ^ cpu->IO.SREG.C;
+				}
 				
 			}
 
 			namespace N {
+
+				static inline void Set(CPU* cpu, Byte value)
+				{
+					cpu->IO.SREG.N = value;
+				}
 				
 				// Set if Most Significant Bit(MSB) of the result is set; cleared otherwise.
 				static inline void MSBSet(CPU* cpu, Byte R)
@@ -84,19 +94,19 @@ namespace ATMega328Emulator {
 			namespace Z {
 				
 				// Set if Zero; cleared otherwise.
-				static inline void ByteNullRes(CPU* cpu, Byte R)
+				static inline void ByteZeroRes(CPU* cpu, Byte R)
 				{
 					cpu->IO.SREG.Z = R == 0;
 				}
 
 				// Set if Zero; cleared otherwise.
-				static inline void WordNullRes(CPU* cpu, Word R)
+				static inline void WordZeroRes(CPU* cpu, Word R)
 				{
 					cpu->IO.SREG.Z = R == 0;
 				}
 
 				// Previous value remains unchanged when the result is zero; cleared otherwise.
-				static inline void ByteNullResCarry(CPU* cpu, Byte R)
+				static inline void ByteZeroResCarry(CPU* cpu, Byte R)
 				{
 					cpu->IO.SREG.Z = (R == 0) & cpu->IO.SREG.Z;
 				}
@@ -141,8 +151,14 @@ namespace ATMega328Emulator {
 					) >> 7;
 				}
 
-				static inline void MSBSet(CPU* cpu, Byte R) {
+				static inline void MSBSet(CPU* cpu, Byte R)
+				{
 					cpu->IO.SREG.C = (R & 0x80) >> 7;
+				}
+
+				static inline void LSBSet(CPU* cpu, Byte R)
+				{
+					cpu->IO.SREG.C = R & 0x01;
 				}
 			}
 		}
@@ -161,7 +177,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteAddTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteCarryMSB(cpu, R, *Rd, *Rr);
 		
 			*Rd = R;
@@ -181,7 +197,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteAddTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteCarryMSB(cpu, R, *Rd, *Rr);
 
 			*Rd = R;
@@ -198,7 +214,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::WordAddTwosComplementOverflow(cpu, R, *Rdh);
 			StatusFlag::N::MSBSet(cpu, (R & 0xFF00) >> 8);
-			StatusFlag::Z::WordNullRes(cpu, R);
+			StatusFlag::Z::WordZeroRes(cpu, R);
 			StatusFlag::C::WordCarryMSB(cpu, R, *Rdh);
 
 			*Rdh = R;
@@ -218,7 +234,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -234,7 +250,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -248,10 +264,9 @@ namespace ATMega328Emulator {
 
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
-			cpu->IO.SREG.C = *Rd & 0x1;
-
-			cpu->IO.SREG.V = cpu->IO.SREG.N ^ cpu->IO.SREG.C; // Has to be done at the end
+			StatusFlag::Z::ByteZeroRes(cpu, R);
+			StatusFlag::C::LSBSet(cpu, *Rd);
+			StatusFlag::V::NCXOR(cpu); // Has to be done at the end
 
 			*Rd = R;
 		}
@@ -328,7 +343,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::Set(cpu, 1);
 			
 			*Rd = R;
@@ -348,7 +363,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
 		}
 
@@ -366,7 +381,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
 		}
 
@@ -383,7 +398,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
 		}
 
@@ -411,7 +426,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			cpu->IO.SREG.V = R == 0x7F;
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -429,7 +444,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -448,7 +463,7 @@ namespace ATMega328Emulator {
 
 			R = R << 1;
 			
-			StatusFlag::Z::WordNullRes(cpu, R);
+			StatusFlag::Z::WordZeroRes(cpu, R);
 
 			*(Word*)&cpu->R00 = R;
 			
@@ -469,7 +484,7 @@ namespace ATMega328Emulator {
 
 			R = R << 1;
 
-			StatusFlag::Z::WordNullRes(cpu, R);
+			StatusFlag::Z::WordZeroRes(cpu, R);
 
 			*(short*)&cpu->R00 = R;
 
@@ -490,7 +505,7 @@ namespace ATMega328Emulator {
 
 			R = R << 1;
 
-			StatusFlag::Z::WordNullRes(cpu, R);
+			StatusFlag::Z::WordZeroRes(cpu, R);
 
 			*(short*)&cpu->R00 = R;
 
@@ -507,7 +522,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			cpu->IO.SREG.V = R == 0x80;
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -572,6 +587,22 @@ namespace ATMega328Emulator {
 			*Rd = *DS;
 		}
 
+		void Handle_LSR(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte R = *Rd >> 1;
+
+			StatusFlag::S::SignedTest(cpu);
+			StatusFlag::N::Set(cpu, 0);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
+			StatusFlag::C::LSBSet(cpu, *Rd);
+			StatusFlag::V::NCXOR(cpu); // Has to be done at the end
+
+			*Rd = R;
+		}
+		
 		void Handle_NEG(Word instruction, CPU* cpu)
 		{
 			Byte d = (instruction & 0b1'1111'0000) >> 4;
@@ -583,7 +614,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			cpu->IO.SREG.V = R == 0x80;
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::NotNull(cpu, R);
 
 			*Rd = R;
@@ -602,7 +633,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 
 			*Rd = R;
 		}
@@ -618,7 +649,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::Set(cpu, 0);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			
 			*Rd = R;
 		}
@@ -637,7 +668,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullResCarry(cpu, R);
+			StatusFlag::Z::ByteZeroResCarry(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
 
 			*Rd = R;
@@ -655,7 +686,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullResCarry(cpu, R);
+			StatusFlag::Z::ByteZeroResCarry(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
 
 			*Rd = R;
@@ -682,7 +713,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, K);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, K);
 
 			*Rd = R;
@@ -702,7 +733,7 @@ namespace ATMega328Emulator {
 			StatusFlag::S::SignedTest(cpu);
 			StatusFlag::V::ByteSubTwosComplementOverflow(cpu, R, *Rd, *Rr);
 			StatusFlag::N::MSBSet(cpu, R);
-			StatusFlag::Z::ByteNullRes(cpu, R);
+			StatusFlag::Z::ByteZeroRes(cpu, R);
 			StatusFlag::C::ByteGreater(cpu, R, *Rd, *Rr);
 
 			*Rd = R;
