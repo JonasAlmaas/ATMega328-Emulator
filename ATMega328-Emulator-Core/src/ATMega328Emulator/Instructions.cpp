@@ -602,6 +602,28 @@ namespace ATMega328Emulator {
 
 			*Rd = R;
 		}
+
+		void Handle_MOV(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1'1111'0000) >> 4;
+			Byte r = (instruction & 0b1111) | ((instruction & 0b10'0000'0000) >> 5);
+
+			Byte* Rd = &cpu->R00 + d;
+			Byte* Rr = &cpu->R00 + r;
+
+			*Rd = *Rr;
+		}
+
+		void Handle_MOVW(Word instruction, CPU* cpu)
+		{
+			Byte d = (instruction & 0b1111'0000) >> 4;
+			Byte r = instruction & 0b1111;
+
+			Word* Rd = (Word*)&cpu->R00 + d;
+			Word* Rr = (Word*)&cpu->R00 + r;
+
+			*Rd = *Rr;
+		}
 		
 		void Handle_NEG(Word instruction, CPU* cpu)
 		{

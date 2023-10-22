@@ -78,6 +78,7 @@ namespace ATMega328Emulator {
 		{
 			case ADIW: Handle_ADIW(instruction, cycles, this); return true;
 			case CBI: Handle_CBI(instruction, this); return true;
+			case MOVW: Handle_MOVW(instruction, this); return true;
 			case SBI: Handle_SBI(instruction, this); return true;
 			default: break;
 		}
@@ -100,6 +101,7 @@ namespace ATMega328Emulator {
 			case CPC: Handle_CPC(instruction, this); return true;
 			case CPSE: Handle_CPSE(instruction, cycles, this); return true;
 			case EOR: Handle_EOR(instruction, this); return true;
+			case MOV: Handle_MOV(instruction, this); return true;
 			case OR: Handle_OR(instruction, this); return true;
 			case SBC: Handle_SBC(instruction, this); return true;
 			case SUB: Handle_SUB(instruction, this); return true;
